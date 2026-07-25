@@ -4,11 +4,59 @@
 
 **Goal:** Build a single-file, mobile-first React web app that routes students to freelance gigs fitting their real timetable and shows which of their skills are in demand.
 
-**Architecture:** One self-contained `index.html`. React 18 + Recharts + Babel load from CDN; all app code lives in one in-browser `<script type="text/babel">`. All state is React `useState` on a single `profile` object; matches, chart data, insight, and strength are derived with `useMemo` and re-compute on every edit (no submit buttons). No backend, no persistence, no build step.
+**Architecture:** One self-contained `index.html`. React 18 + Babel load from CDN; Recharts is optional behind the chart kill switch. All app code lives in one in-browser `<script type="text/babel">`. All state is React `useState` on a single `profile` object; matches, chart data, insight, and strength are derived with `useMemo` and re-compute on every edit (no submit buttons). No backend, no persistence, no build step.
 
-**Tech Stack:** React 18 (UMD), ReactDOM 18 (UMD), Recharts 2 (UMD), Babel Standalone (in-browser JSX), hand-written CSS.
+**Tech Stack:** React 18 (UMD), ReactDOM 18 (UMD), Babel Standalone (in-browser JSX), hand-written CSS; Recharts 2 (UMD) only if reliable before the cutoff.
 
 **Spec:** `docs/superpowers/specs/2026-07-24-flexible-freelancing-students-design.md`
+
+## Hackathon Execution Override (authoritative)
+
+The detailed tasks below remain implementation recipes, but **do not execute all 13 sequentially**. For a three-hour build window, ship the differentiating loop first and stop adding scope when a gate fails.
+
+### Definition of done
+
+The MVP is judge-ready only when all five are true:
+
+1. A seeded profile is visible immediately and the app loads from both `file://` and the deployed URL.
+2. Toggling a skill or busy slot updates matching, ratios, and the single insight without a submit action.
+3. Every displayed gig names at least one compatible work window and respects `weeklyHours`.
+4. The 90-second demo passes twice at 380px with no blocking console errors or horizontal scroll.
+5. A fallback screenshot or screen recording and a cached/deployed copy are available before judging.
+
+### Timebox and gates
+
+| Window | Ship | Gate |
+| --- | --- | --- |
+| 0–45 min | Data, pure functions, seeded profile, skill toggles | Seed assertions pass; selecting no skills and setting 0 hours do not produce false claims |
+| 45–90 min | Busy grid and matched-gig cards | Seed returns the expected four matches; toggling the matching slot removes or changes a result |
+| 90–120 min | Demand chart and one computed insight | Labels are readable at 380px without hover |
+| 120–150 min | Mobile polish, empty/error states, deploy | Full demo passes once locally and once from the deployed URL |
+| 150–180 min | Contingency and rehearsal only | Two clean 90-second runs; no new features |
+
+At the end of any window, fix the gate before proceeding. At **T−60 minutes**, freeze features. At **T−30 minutes**, freeze code except for demo-blocking defects.
+
+### Scope priority
+
+- **Must ship:** Tasks 1–7 and the responsive/deploy checks from Task 13.
+- **Should ship if the must-have demo is green:** a compact identity summary and employer preview from Tasks 8 and 12.
+- **Cut first:** strength meter (Task 11), certification editor (Task 9), experience editor (Task 10), then nonessential chart colour/animation. Seeded credibility data may remain read-only.
+- **Chart kill switch:** give Recharts 20 minutes. If the CDN/global/responsive chart is not reliable, render the eight ratios as accessible HTML/CSS bars. The judge needs the comparison, not the library.
+- **Dependency fallback:** keep a tested deployed URL and warm browser cache. If any CDN fails during rehearsal, use the CSS-chart fallback or the captured demo rather than debugging infrastructure during judging.
+
+### Required correctness hardening
+
+- Treat gig `slots` as **compatible work windows**, not proof that the entire multi-hour gig fits inside one time band. Use that wording in the UI and demo.
+- Clamp `weeklyHours` to 0–25 and show no capacity claim at 0 hours.
+- Keep skills unique, ignore unknown busy-slot IDs, and guard market ratios against zero/unknown supply.
+- Make equal-ratio ranking deterministic with gig `id` as the tie-breaker.
+- The empty state recommends the highest-demand unselected skill; do not call it “nearest” unless an explicit skill-adjacency map is added.
+- Do not claim two skills require “similar effort.” Market data supports demand and average-rate comparisons only.
+- Use a `crypto.randomUUID()` fallback so row creation does not fail in browsers where it is unavailable.
+
+### Efficient verification and commits
+
+Add lightweight `console.assert` checks for the seed ratios, match order, zero-hour behavior, and strength bounds. Run them after logic changes; use manual browser checks for interaction and layout. Commit at three milestones—`core matching`, `judge UI`, and `demo hardening`—instead of after every component.
 
 ## Global Constraints
 
@@ -18,12 +66,12 @@ Every task's requirements implicitly include these:
 - **CDN, pinned versions:** react@18.2.0, react-dom@18.2.0, recharts@2.12.7, @babel/standalone@7.24.7.
 - **State only:** profile lives in React state; it is expected to reset on refresh. No localStorage, no accounts.
 - **No submit buttons:** every profile edit updates state and re-derives results instantly.
-- **Repeatable rows:** assign a stable `id` (`crypto.randomUUID()`) at creation; key React lists on `id`, never on array index.
+- **Repeatable rows:** assign a stable `id` at creation with a `crypto.randomUUID()` fallback; key React lists on `id`, never on array index.
 - **Number formatting:** all demand ratios display to exactly one decimal place (`toFixed(1)`) with a `×`; capacity and strength display as rounded integers.
 - **Mobile-first:** must render legibly at 380px width, single scrolling column.
-- **Verification:** browser only — after each task, open `index.html` and check the stated on-screen result. No test runner. To open on Windows: `start "" "index.html"` in PowerShell, or double-click. Use the browser devtools console (F12) to confirm zero errors.
+- **Verification:** lightweight in-browser assertions for pure logic plus manual checks for interaction and layout. To open on Windows: `start "" "index.html"` in PowerShell, or double-click. Use the browser devtools console (F12) to confirm zero blocking errors.
 - **8 skills, 21 slots, 12 gigs** as defined in Task 1. Market data exists for all 8 skills.
-- **Commit after each task** with the stated message.
+- **Commits:** the per-task messages below are optional checkpoints. Under time pressure, commit only after the three authoritative milestones above.
 
 ---
 
@@ -99,7 +147,8 @@ Replace the line `// === DATA ===` with:
 
 ```javascript
 // === DATA ===
-const uid = () => crypto.randomUUID();
+const uid = () => globalThis.crypto?.randomUUID?.() ??
+  `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 const SKILLS = ["React", "Python", "Writing", "UI Design",
                 "Tutoring", "Data Entry", "Video Editing", "Social Media"];
@@ -161,7 +210,10 @@ Replace the line `// === PURE LOGIC ===` with:
 
 ```javascript
 // === PURE LOGIC ===
-const ratioOf = (skill) => { const m = marketBySkill[skill]; return m ? m.demand / m.supply : 0; };
+const ratioOf = (skill) => {
+  const m = marketBySkill[skill];
+  return m && m.supply > 0 ? m.demand / m.supply : 0;
+};
 
 function matchGigs(profile) {
   const skillNames = profile.skills.map(s => s.skill);
@@ -176,11 +228,12 @@ function matchGigs(profile) {
       freeSlot: g.slots.find(slot => !profile.busy.includes(slot)),
       ratio: ratioOf(g.skill),
     }))
-    .sort((a, b) => b.ratio - a.ratio);
+    .sort((a, b) => b.ratio - a.ratio || a.id - b.id);
 }
 
 function generateInsight(profile) {
-  const selected = profile.skills.map(s => s.skill);
+  const selected = [...new Set(profile.skills.map(s => s.skill))]
+    .filter(skill => marketBySkill[skill]);
   if (selected.length === 0) return "Select a skill to see where the demand is.";
   const ranked = selected
     .map(skill => ({ skill, ratio: ratioOf(skill), rate: marketBySkill[skill] ? marketBySkill[skill].avgRate : 0 }))
@@ -192,10 +245,13 @@ function generateInsight(profile) {
       .filter(m => m.skill !== weak.skill)
       .sort((a, b) => b.avgRate - a.avgRate)[0];
     const pctMore = Math.round(((better.avgRate - weak.rate) / weak.rate) * 100);
-    return `${weak.skill} is oversupplied at ${weak.ratio.toFixed(1)}×. ${better.skill} pays ${pctMore}% more per hour for similar effort.`;
+    return `${weak.skill} is oversupplied at ${weak.ratio.toFixed(1)}×. In this sample, ${better.skill} has a ${pctMore}% higher average rate.`;
+  }
+  if (profile.weeklyHours < 2) {
+    return `${top.skill} work is in ${top.ratio.toFixed(1)}× demand. Add at least 2 weekly hours to unlock a gig.`;
   }
   const gigsPerWeek = Math.max(1, Math.floor(profile.weeklyHours / 4));
-  return `${top.skill} work is in ${top.ratio.toFixed(1)}× demand. Your ${profile.weeklyHours} free hours could cover ${gigsPerWeek} gig${gigsPerWeek === 1 ? "" : "s"} a week.`;
+  return `${top.skill} work is in ${top.ratio.toFixed(1)}× demand. Your ${profile.weeklyHours} free hours could cover about ${gigsPerWeek} typical gig${gigsPerWeek === 1 ? "" : "s"} a week.`;
 }
 
 function computeStrength(profile) {
@@ -219,7 +275,7 @@ Expected debug panel output:
   2. `Fix responsive layout bugs → Monday evening (3.2×)`
   3. `Write 4 blog posts on fintech → Wednesday evening (2.3×)`
   4. `Proofread a dissertation chapter → Friday evening (2.3×)`
-- `insight`: `"React work is in 3.2× demand. Your 10 free hours could cover 2 gigs a week."`
+- `insight`: `"React work is in 3.2× demand. Your 10 free hours could cover about 2 typical gigs a week."`
 - `strength: 100`
 - Console shows **zero** errors (the Recharts/React CDN scripts all load).
 
@@ -709,7 +765,7 @@ Before `</style>`, add:
 
 - [ ] **Step 4: Verify in browser**
 
-Reload. Expected: a dark badge at the top reading "💡 React work is in 3.2× demand. Your 10 free hours could cover 2 gigs a week." Drag capacity to 4h → sentence updates to "…could cover 1 gig a week." (singular). Deselect React and Writing, then select only Data Entry → badge switches to the caution form: "Data Entry is oversupplied at 0.8×. React pays 144% more per hour for similar effort." Exactly one badge, never a list.
+Reload. Expected: a dark badge at the top reading "💡 React work is in 3.2× demand. Your 10 free hours could cover about 2 typical gigs a week." Drag capacity to 4h → sentence updates to "…about 1 typical gig a week." (singular). At 0h it says to add at least 2 weekly hours and never claims a gig fits. Deselect React and Writing, then select only Data Entry → badge switches to the caution form: "Data Entry is oversupplied at 0.8×. In this sample, React has a 144% higher average rate." Exactly one badge, never a list.
 
 - [ ] **Step 5: Commit**
 
