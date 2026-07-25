@@ -3,557 +3,927 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#f5f5f4" />
-<title>SlotMatch — freelancing that fits your timetable</title>
+<meta name="theme-color" content="#f2f2f3" />
+<title>CampusGigs — freelancing that fits your timetable</title>
+<link rel="stylesheet" href="industry.css" />
 <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
 <style>
-  :root {
-    color-scheme: light;
-    --ink: #1c1917;
-    --muted: #68635e;
-    --line: #dedbd7;
-    --paper: #fff;
-    --ground: #f5f5f4;
-    --dark: #292524;
-    --green: #267354;
-    --green-bg: #e8f3ed;
-    --amber: #9a5b13;
-    --amber-bg: #fff3df;
-    --red: #9f3a31;
-    --red-bg: #fbe9e7;
-  }
-  * { box-sizing: border-box; }
-  html, body { overflow-x: hidden; }
-  body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: "Aptos", "Helvetica Neue", sans-serif;
-    font-size: 15px;
-    line-height: 1.45;
-  }
-  button, input, select { font: inherit; }
-  button { color: inherit; }
-  #root { width: min(100%, 760px); margin: 0 auto; padding: 20px 16px 56px; }
-  .app-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 4px 0 16px;
-    border-bottom: 1px solid var(--line);
-  }
-  .app-head h1 { margin: 0; font-size: 23px; letter-spacing: -.03em; }
-  .app-head p { margin: 0; color: var(--muted); font-size: 13px; text-align: right; }
-  main { padding-top: 16px; }
-  .card {
-    margin: 0 0 14px;
-    padding: 16px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: 9px;
-  }
-  .card h2 { margin: 0 0 10px; font-size: 17px; letter-spacing: -.01em; }
-  .section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .section-head h2 { margin: 0; }
-  .hint { margin: -4px 0 12px; color: var(--muted); font-size: 12px; }
-  .insight {
-    margin-bottom: 14px;
-    padding: 13px 14px;
-    color: #fff;
-    background: var(--dark);
-    border-radius: 8px;
-    font-size: 14px;
-    line-height: 1.45;
-  }
-  .profile-summary { display: grid; grid-template-columns: 48px 1fr; gap: 12px; align-items: center; }
-  .avatar {
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    color: #fff;
-    background: var(--dark);
-    font-weight: 700;
-  }
-  .profile-summary strong { display: block; font-size: 16px; }
-  .profile-summary p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
-  .credibility {
-    grid-column: 2;
-    margin-top: 2px;
-    padding-top: 8px;
-    border-top: 1px solid #eeece9;
-    color: #514c47;
-    font-size: 12px;
-  }
-  .block + .block { margin-top: 16px; padding-top: 16px; border-top: 1px solid #eeece9; }
-  .block h3 { margin: 0 0 8px; font-size: 14px; }
-  .skills { display: grid; gap: 8px; }
-  .skill-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 8px;
-    align-items: center;
-  }
-  .skill-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    min-height: 38px;
-    padding: 7px 10px;
-    background: #fafaf9;
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    cursor: pointer;
-    text-align: left;
-  }
-  .skill-toggle[aria-pressed="true"] {
-    color: #fff;
-    background: var(--dark);
-    border-color: var(--dark);
-  }
-  .skill-ratio { font-size: 12px; font-variant-numeric: tabular-nums; opacity: .82; }
-  .level {
-    height: 38px;
-    max-width: 126px;
-    padding: 0 7px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    font-size: 12px;
-  }
-  .availability-grid {
-    display: grid;
-    grid-template-columns: 38px repeat(3, minmax(0, 1fr));
-    gap: 5px;
-    width: 100%;
-    margin-bottom: 14px;
-  }
-  .grid-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    color: var(--muted);
-    font-size: 11px;
-  }
-  .day-label { justify-content: flex-start; font-weight: 700; }
-  .slot {
-    min-width: 0;
-    height: 34px;
-    padding: 0;
-    background: #fafaf9;
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    cursor: pointer;
-  }
-  .slot:hover { border-color: #a8a29e; }
-  .slot.busy { color: var(--red); background: var(--red-bg); border-color: #e1aaa5; font-weight: 700; }
-  .capacity { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center; font-size: 13px; }
-  .capacity output { font-weight: 700; font-variant-numeric: tabular-nums; }
-  .capacity input { grid-column: 1 / -1; width: 100%; accent-color: var(--dark); }
-  .chart { position: relative; display: grid; gap: 8px; }
-  .chart::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: calc(94px + (100% - 140px) * .2778);
-    border-left: 1px dashed #a8a29e;
-    pointer-events: none;
-  }
-  .bar-row { display: grid; grid-template-columns: 86px minmax(0, 1fr) 38px; gap: 8px; align-items: center; min-width: 0; }
-  .bar-name { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-  .bar-track { height: 18px; background: #f0efed; border-radius: 4px; overflow: hidden; }
-  .bar { height: 100%; background: #8a8580; border-radius: 4px; }
-  .bar.opportunity { background: var(--green); }
-  .bar.caution { background: #c27a1c; }
-  .bar.selected { box-shadow: inset 0 0 0 2px var(--dark), inset 0 0 0 3px #fff; }
-  .bar-value { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .chart-key { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 12px 0 0; color: var(--muted); font-size: 11px; }
-  .chart-key span { white-space: nowrap; }
-  .count { color: var(--muted); font-size: 13px; font-weight: 400; }
-  .gig {
-    padding: 12px 0;
-    border-top: 1px solid #eeece9;
-  }
-  .gig:first-of-type { border-top: 0; padding-top: 2px; }
-  .gig-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
-  .gig-title { font-weight: 700; font-size: 14px; }
-  .ratio-badge {
-    flex: 0 0 auto;
-    padding: 2px 7px;
-    border-radius: 6px;
-    background: #efeeec;
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .ratio-badge.opportunity { color: var(--green); background: var(--green-bg); }
-  .ratio-badge.caution { color: var(--amber); background: var(--amber-bg); }
-  .gig-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 5px 0; color: var(--muted); font-size: 12px; }
-  .gig-fit { color: var(--green); font-size: 12px; font-weight: 700; }
-  .empty { margin: 0; color: var(--muted); font-size: 13px; }
-  .sdg-note { margin: 20px 0 0; color: var(--muted); font-size: 11px; text-align: center; }
-  @media (min-width: 620px) {
-    .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (max-width: 400px) {
-    #root { padding: 12px 10px 40px; }
-    .app-head { display: block; }
-    .app-head p { margin-top: 2px; text-align: left; }
-    .card { padding: 14px 12px; }
-    .skill-row { grid-template-columns: minmax(0, 1fr) 112px; }
-    .level { width: 112px; }
-    .bar-row { grid-template-columns: 78px minmax(0, 1fr) 35px; gap: 6px; }
-    .chart::after { left: calc(84px + (100% - 119px) * .2778); }
-  }
+  body { margin: 0; }
+  a { color: var(--color-accent-700); }
+  a:hover { color: var(--color-accent-900); }
+  .cart-badge { position: absolute; top: -6px; right: -6px; background: var(--color-accent-600); color: #fff; font-size: 10px; font-weight: 700; min-width: 17px; height: 17px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 3px; }
+  .gigcard-cat { display: flex; flex-direction: column; height: 100%; }
+  .tier-opt { cursor: pointer; text-align: center; padding: 8px 4px; border-width: 1px; background: none; font-family: var(--font-body); }
+  .tier-opt.tier-selected { border-color: var(--color-accent-700); box-shadow: inset 0 0 0 1px var(--color-accent-700); }
+  .tab-btn { font-family: var(--font-body); font-size: 13px; letter-spacing: .02em; background: none; border: none; border-bottom: 2px solid transparent; padding: 8px 4px; margin-bottom: -1px; color: var(--color-neutral-700); cursor: pointer; }
+  .tab-btn[data-on="true"] { color: var(--color-text); font-weight: 600; border-bottom-color: var(--color-accent-700); }
+  .tab-btn:hover { color: var(--color-accent-900); }
+  .day-track { position: relative; height: 26px; border: 1px solid var(--color-divider); cursor: crosshair; touch-action: none;
+    background-image: repeating-linear-gradient(to right, var(--color-neutral-200) 0 1px, transparent 1px calc(100% / 24)); }
+  .avail-block { position: absolute; top: 2px; bottom: 2px; background: var(--color-accent-200); border: 1px solid var(--color-accent-700); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--color-accent-900); overflow: visible; cursor: grab; }
+  .avail-handle { position: absolute; top: -2px; bottom: -2px; width: 9px; cursor: ew-resize; }
+  .dialog { background: var(--color-bg) !important; }
+  .tag-outline { cursor: pointer; border: none; }
+  .tag-accent { cursor: pointer; border: none; }
+  /* Stands in for the design's <image-slot> placeholder — a drawn cover plate, no upload. */
+  .img-slot { width: 100%; display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--color-divider);
+    background: repeating-linear-gradient(45deg, var(--color-accent-100) 0 9px, var(--color-accent-200) 9px 18px);
+    color: var(--color-accent-800); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
 </style>
 </head>
 <body>
 <div id="root"></div>
+
 <script type="text/babel" data-presets="react">
-const { useMemo, useState } = React;
+const { useState } = React;
 
-// === DATA ===
-const uid = () => globalThis.crypto?.randomUUID?.() ??
-  `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-const SKILLS = ["React", "Python", "Writing", "UI Design", "Tutoring", "Data Entry", "Video Editing", "Social Media"];
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const BANDS = ["AM", "PM", "EVE"];
-const SLOTS = DAYS.flatMap(day => BANDS.map(band => `${day}-${band}`));
-const VALID_SLOTS = new Set(SLOTS);
-const DAY_NAMES = { Mon: "Monday", Tue: "Tuesday", Wed: "Wednesday", Thu: "Thursday", Fri: "Friday", Sat: "Saturday", Sun: "Sunday" };
-const BAND_NAMES = { AM: "morning", PM: "afternoon", EVE: "evening" };
-const skillMarket = [
-  { skill: "React", demand: 142, supply: 45, avgRate: 22 },
-  { skill: "UI Design", demand: 95, supply: 38, avgRate: 20 },
-  { skill: "Writing", demand: 110, supply: 47, avgRate: 15 },
-  { skill: "Python", demand: 128, supply: 63, avgRate: 21 },
-  { skill: "Tutoring", demand: 88, supply: 52, avgRate: 18 },
-  { skill: "Data Entry", demand: 80, supply: 102, avgRate: 9 },
-  { skill: "Video Editing", demand: 104, supply: 40, avgRate: 19 },
-  { skill: "Social Media", demand: 90, supply: 78, avgRate: 13 },
+/* Inline styles are carried over verbatim from the design as CSS strings; S() turns
+   one into React's style object so the markup stays diffable against the source. */
+const styleCache = {};
+const S = (css) => styleCache[css] || (styleCache[css] = Object.fromEntries(
+  css.split(";").filter((d) => d.trim()).map((d) => {
+    const i = d.indexOf(":");
+    const k = d.slice(0, i).trim();
+    return [k.startsWith("--") ? k : k.replace(/-([a-z])/g, (_, c) => c.toUpperCase()), d.slice(i + 1).trim()];
+  })
+));
+
+const Corners = () => (
+  <React.Fragment>
+    <i className="corner tl"></i><i className="corner tr"></i><i className="corner bl"></i><i className="corner br"></i>
+  </React.Fragment>
+);
+
+const ImageSlot = ({ label, height }) => (
+  <div className="img-slot" style={S("height:" + height)}>{label}</div>
+);
+
+const SKILL_CATEGORIES = ["React", "Python", "Writing", "UI Design", "Tutoring", "Data Entry", "Video Editing", "Social Media"];
+
+const FREELANCERS = {
+  priya:  { name: "Priya N.",  initials: "PN", rating: 4.9, reviews: 82 },
+  jonah:  { name: "Jonah T.",  initials: "JT", rating: 4.8, reviews: 61 },
+  maren:  { name: "Maren K.",  initials: "MK", rating: 4.9, reviews: 140 },
+  oscar:  { name: "Oscar D.",  initials: "OD", rating: 4.7, reviews: 44 },
+  aiko:   { name: "Aiko S.",   initials: "AS", rating: 5.0, reviews: 97 },
+  devon:  { name: "Devon R.",  initials: "DR", rating: 4.6, reviews: 28 },
+  lucia:  { name: "Lucía F.",  initials: "LF", rating: 4.8, reviews: 53 },
+  sam:    { name: "Sam W.",    initials: "SW", rating: 4.7, reviews: 36 },
+};
+
+const T = (name, price, delivery) => ({ name, price, delivery });
+
+const SEED_GIGS = [
+  { id: 1, category: "React", title: "I will build a slick React landing page for your startup", freelancer: FREELANCERS.priya, desc: "A responsive, production-ready landing page built in React — clean components, no bloat.", tiers: [T("Basic",45,"3 days"),T("Standard",80,"2 days"),T("Premium",140,"1 day")], owner: true, active: true, orders: 34, earnings: 1530 },
+  { id: 2, category: "React", title: "I will fix responsive layout bugs in your React app", freelancer: FREELANCERS.priya, desc: "Send me the repo and the broken breakpoints — I'll patch the layout and explain the fix.", tiers: [T("Basic",35,"2 days"),T("Standard",60,"1 day"),T("Premium",95,"12 hours")], owner: true, active: true, orders: 21, earnings: 945 },
+  { id: 3, category: "Python", title: "I will scrape and clean any dataset into a tidy CSV", freelancer: FREELANCERS.jonah, desc: "Give me the source and the shape you want — I'll hand back a clean, deduplicated CSV.", tiers: [T("Basic",30,"2 days"),T("Standard",55,"1 day"),T("Premium",90,"12 hours")] },
+  { id: 4, category: "Python", title: "I will automate your weekly report with a Python script", freelancer: FREELANCERS.jonah, desc: "A reusable script that turns your recurring report into a five-minute job.", tiers: [T("Basic",40,"3 days"),T("Standard",70,"2 days"),T("Premium",110,"1 day")] },
+  { id: 5, category: "Writing", title: "I will write blog posts that don't read like a template", freelancer: FREELANCERS.maren, desc: "Researched, on-brand posts with a real point of view, not filler.", tiers: [T("Basic",25,"2 days"),T("Standard",45,"1 day"),T("Premium",75,"12 hours")] },
+  { id: 6, category: "Writing", title: "I will proofread your dissertation chapter overnight", freelancer: FREELANCERS.maren, desc: "Line edits for grammar, clarity and citation formatting, turned around fast.", tiers: [T("Basic",20,"1 day"),T("Standard",35,"12 hours"),T("Premium",55,"6 hours")] },
+  { id: 7, category: "UI Design", title: "I will design a clean 3-screen onboarding flow", freelancer: FREELANCERS.oscar, desc: "Wireframe to polished screens, ready to hand to a developer.", tiers: [T("Basic",60,"4 days"),T("Standard",100,"2 days"),T("Premium",160,"1 day")] },
+  { id: 8, category: "UI Design", title: "I will turn your wireframes into a polished Figma mockup", freelancer: FREELANCERS.oscar, desc: "Real type, spacing and states — no more grey boxes.", tiers: [T("Basic",45,"3 days"),T("Standard",80,"2 days"),T("Premium",130,"1 day")] },
+  { id: 9, category: "Tutoring", title: "I will tutor GCSE maths until it actually clicks", freelancer: FREELANCERS.aiko, desc: "Patient, exam-focused sessions built around where you're actually stuck.", tiers: [T("Basic",20,"1 session"),T("Standard",35,"2 sessions"),T("Premium",60,"4 sessions")] },
+  { id: 10, category: "Tutoring", title: "I will help you debug your intro Python homework", freelancer: FREELANCERS.aiko, desc: "Walk through the error together and actually understand why it broke.", tiers: [T("Basic",15,"1 session"),T("Standard",25,"2 sessions"),T("Premium",40,"3 sessions")] },
+  { id: 11, category: "Data Entry", title: "I will enter 500 rows into your CRM, accurately", freelancer: FREELANCERS.devon, desc: "Careful, double-checked entry with a short QA pass before delivery.", tiers: [T("Basic",18,"2 days"),T("Standard",30,"1 day"),T("Premium",48,"12 hours")] },
+  { id: 12, category: "Data Entry", title: "I will clean up your messy spreadsheet in 24 hours", freelancer: FREELANCERS.devon, desc: "Dedupe, reformat and standardise — hand it over ready to use.", tiers: [T("Basic",15,"1 day"),T("Standard",25,"12 hours"),T("Premium",40,"6 hours")] },
+  { id: 13, category: "Video Editing", title: "I will edit a punchy 5-minute YouTube video", freelancer: FREELANCERS.lucia, desc: "Cuts, captions and pacing that keep people watching.", tiers: [T("Basic",40,"3 days"),T("Standard",70,"2 days"),T("Premium",115,"1 day")] },
+  { id: 14, category: "Video Editing", title: "I will cut your lecture recordings into shareable clips", freelancer: FREELANCERS.lucia, desc: "Turn a long recording into a handful of clean, captioned highlights.", tiers: [T("Basic",25,"2 days"),T("Standard",45,"1 day"),T("Premium",70,"12 hours")] },
+  { id: 15, category: "Social Media", title: "I will plan a week of Instagram posts that match your brand", freelancer: FREELANCERS.sam, desc: "A full week of on-brand posts, captions and hashtags, ready to schedule.", tiers: [T("Basic",30,"3 days"),T("Standard",50,"2 days"),T("Premium",80,"1 day")] },
+  { id: 16, category: "Social Media", title: "I will write captions that actually get replies", freelancer: FREELANCERS.sam, desc: "Short, sharp captions built around a hook, not just a description.", tiers: [T("Basic",15,"2 days"),T("Standard",25,"1 day"),T("Premium",40,"12 hours")] },
 ];
-const marketBySkill = Object.fromEntries(skillMarket.map(item => [item.skill, item]));
-const gigs = [
-  { id: 1, title: "Build a landing-page component", skill: "React", duration: 4, pay: 60, slots: ["Tue-EVE", "Wed-EVE", "Sat-AM", "Sat-PM"] },
-  { id: 2, title: "Fix responsive layout bugs", skill: "React", duration: 3, pay: 45, slots: ["Mon-EVE", "Thu-EVE", "Sun-PM"] },
-  { id: 3, title: "Scrape and clean a dataset", skill: "Python", duration: 5, pay: 70, slots: ["Wed-AM", "Fri-AM", "Sat-PM"] },
-  { id: 4, title: "Automate a weekly report script", skill: "Python", duration: 3, pay: 48, slots: ["Tue-PM", "Thu-PM"] },
-  { id: 5, title: "Write 4 blog posts on fintech", skill: "Writing", duration: 6, pay: 90, slots: ["Mon-AM", "Wed-EVE", "Sun-AM", "Sun-EVE"] },
-  { id: 6, title: "Proofread a dissertation chapter", skill: "Writing", duration: 2, pay: 30, slots: ["Fri-EVE", "Sat-EVE"] },
-  { id: 7, title: "Design a 3-screen onboarding flow", skill: "UI Design", duration: 5, pay: 95, slots: ["Tue-AM", "Thu-AM", "Sat-AM"] },
-  { id: 8, title: "Tutor GCSE maths, 2 sessions", skill: "Tutoring", duration: 3, pay: 54, slots: ["Mon-PM", "Wed-PM", "Fri-PM"] },
-  { id: 9, title: "Enter 500 rows into a CRM", skill: "Data Entry", duration: 4, pay: 36, slots: ["Tue-EVE", "Thu-EVE", "Sat-PM", "Sun-PM"] },
-  { id: 10, title: "Edit a 5-minute YouTube video", skill: "Video Editing", duration: 4, pay: 72, slots: ["Wed-EVE", "Fri-EVE", "Sun-EVE"] },
-  { id: 11, title: "Plan a week of Instagram posts", skill: "Social Media", duration: 3, pay: 42, slots: ["Mon-AM", "Tue-AM", "Fri-AM"] },
-  { id: 12, title: "Help with intro Python homework", skill: "Tutoring", duration: 2, pay: 40, slots: ["Thu-PM", "Sat-AM", "Sun-AM"] },
+
+const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const DAY_NAMES = { Mon:"Monday", Tue:"Tuesday", Wed:"Wednesday", Thu:"Thursday", Fri:"Friday", Sat:"Saturday", Sun:"Sunday" };
+
+const BAND_RANGES = { AM: [0, 12], PM: [12, 18], EVE: [18, 24] };
+const fmtHour = (h) => {
+  if (h === 0 || h === 24) return "12am";
+  if (h === 12) return "12pm";
+  return h < 12 ? h + "am" : (h - 12) + "pm";
+};
+const mergeAvail = (blocks) => {
+  const out = [];
+  DAYS.forEach((day) => {
+    const dayBlocks = blocks.filter((b) => b.day === day).sort((a, b) => a.start - b.start);
+    dayBlocks.forEach((b) => {
+      const last = out[out.length - 1];
+      if (last && last.day === day && b.start <= last.end) {
+        last.end = Math.max(last.end, b.end);
+      } else {
+        out.push({ ...b });
+      }
+    });
+  });
+  return out;
+};
+
+const SKILL_MARKET = [
+  { skill: "React",         demand: 142, supply: 45,  avgRate: 22 },
+  { skill: "UI Design",     demand:  95, supply: 38,  avgRate: 20 },
+  { skill: "Writing",       demand: 110, supply: 47,  avgRate: 15 },
+  { skill: "Python",        demand: 128, supply: 63,  avgRate: 21 },
+  { skill: "Tutoring",      demand:  88, supply: 52,  avgRate: 18 },
+  { skill: "Data Entry",    demand:  80, supply: 102, avgRate:  9 },
+  { skill: "Video Editing", demand: 104, supply: 40,  avgRate: 19 },
+  { skill: "Social Media",  demand:  90, supply: 78,  avgRate: 13 },
 ];
-const seedProfile = {
-  name: "Maya Okafor",
-  university: "University of Manchester",
-  course: "BSc Computer Science",
-  gradYear: "2027",
-  headline: "CS sophomore — React and Python, free evenings",
-  skills: [{ skill: "React", level: "intermediate" }, { skill: "Writing", level: "beginner" }],
-  certifications: [{ id: uid(), title: "Google UX Design Certificate", issuer: "Coursera", year: "2025" }],
-  experience: [{ id: uid(), role: "Frontend Lead", org: "University Coding Society", duration: "1 year", description: "Built the society's event-signup site in React" }],
-  busy: ["Mon-AM", "Mon-PM", "Wed-AM", "Fri-AM"],
-  weeklyHours: 10,
+const MARKET_BY_SKILL = {};
+SKILL_MARKET.forEach((m) => { MARKET_BY_SKILL[m.skill] = m; });
+const ratioOf = (skill) => {
+  const m = MARKET_BY_SKILL[skill];
+  return m && m.supply > 0 ? m.demand / m.supply : 0;
 };
 
-// === PURE LOGIC ===
-const clampHours = value => Math.min(25, Math.max(0, Math.round(Number(value) || 0)));
-const ratioOf = skill => {
-  const market = marketBySkill[skill];
-  return market && market.supply > 0 ? market.demand / market.supply : 0;
-};
-const slotLabel = slot => {
-  if (!VALID_SLOTS.has(slot)) return "unknown time";
-  const [day, band] = slot.split("-");
-  return `${DAY_NAMES[day]} ${BAND_NAMES[band]}`;
-};
-const initials = name => (name || "").trim().split(/\s+/).filter(Boolean).map(word => word[0]).slice(0, 2).join("").toUpperCase() || "?";
-const uniqueKnownSkills = skills => [...new Set((skills || []).map(item => item?.skill).filter(skill => SKILLS.includes(skill)))];
-const validBusy = busy => new Set((busy || []).filter(slot => VALID_SLOTS.has(slot)));
+const BRIEFS = [
+  { id: 1,  title: "Build a landing-page component",    skill: "React",         duration: 4, pay: 60, client: "Northgate Studio",  slots: ["Tue-EVE","Wed-EVE","Sat-AM","Sat-PM"] },
+  { id: 2,  title: "Fix responsive layout bugs",        skill: "React",         duration: 3, pay: 45, client: "Loop & Co.",        slots: ["Mon-EVE","Thu-EVE","Sun-PM"] },
+  { id: 3,  title: "Scrape and clean a dataset",        skill: "Python",        duration: 5, pay: 70, client: "Verity Analytics",  slots: ["Wed-AM","Fri-AM","Sat-PM"] },
+  { id: 4,  title: "Automate a weekly report script",   skill: "Python",        duration: 3, pay: 48, client: "Halden Logistics",  slots: ["Tue-PM","Thu-PM"] },
+  { id: 5,  title: "Write 4 blog posts on fintech",     skill: "Writing",       duration: 6, pay: 90, client: "Ledgerly",          slots: ["Mon-AM","Wed-EVE","Sun-AM","Sun-EVE"] },
+  { id: 6,  title: "Proofread a dissertation chapter",  skill: "Writing",       duration: 2, pay: 30, client: "R. Adeyemi",        slots: ["Fri-EVE","Sat-EVE"] },
+  { id: 7,  title: "Design a 3-screen onboarding flow", skill: "UI Design",     duration: 5, pay: 95, client: "Kestrel Health",    slots: ["Tue-AM","Thu-AM","Sat-AM"] },
+  { id: 8,  title: "Tutor GCSE maths, 2 sessions",      skill: "Tutoring",      duration: 3, pay: 54, client: "The Fields family", slots: ["Mon-PM","Wed-PM","Fri-PM"] },
+  { id: 9,  title: "Enter 500 rows into a CRM",         skill: "Data Entry",    duration: 4, pay: 36, client: "Brightpath Sales",  slots: ["Tue-EVE","Thu-EVE","Sat-PM","Sun-PM"] },
+  { id: 10, title: "Edit a 5-minute YouTube video",     skill: "Video Editing", duration: 4, pay: 72, client: "Maker's Almanac",   slots: ["Wed-EVE","Fri-EVE","Sun-EVE"] },
+  { id: 11, title: "Plan a week of Instagram posts",    skill: "Social Media",  duration: 3, pay: 42, client: "Fen & Feather",     slots: ["Mon-AM","Tue-AM","Fri-AM"] },
+  { id: 12, title: "Help with intro Python homework",   skill: "Tutoring",      duration: 2, pay: 40, client: "J. Whitfield",      slots: ["Thu-PM","Sat-AM","Sun-AM"] },
+];
 
-function matchGigs(profile) {
-  const selected = new Set(uniqueKnownSkills(profile.skills));
-  const busy = validBusy(profile.busy);
-  const hours = clampHours(profile.weeklyHours);
-  return gigs
-    .filter(gig => selected.has(gig.skill) && gig.duration <= hours && gig.slots.some(slot => VALID_SLOTS.has(slot) && !busy.has(slot)))
-    .map(gig => ({
-      ...gig,
-      freeSlot: gig.slots.find(slot => VALID_SLOTS.has(slot) && !busy.has(slot)),
-      ratio: ratioOf(gig.skill),
+const SEED_AVAIL = [
+  { id: "a1", day: "Mon", start: 18, end: 22 },
+  { id: "a2", day: "Tue", start: 13, end: 17 },
+  { id: "a3", day: "Tue", start: 19, end: 22 },
+  { id: "a4", day: "Wed", start: 18, end: 23 },
+  { id: "a5", day: "Thu", start: 9,  end: 12 },
+  { id: "a6", day: "Fri", start: 18, end: 22 },
+  { id: "a7", day: "Sat", start: 10, end: 16 },
+];
+
+const totalHoursOf = (avail) => avail.reduce((n, b) => n + (b.end - b.start), 0);
+
+/* A declared window counts for a band only if it overlaps it by a full hour;
+   the label names the real overlap, not the whole band. */
+const windowForSlot = (avail, slot) => {
+  const parts = slot.split("-");
+  const range = BAND_RANGES[parts[1]];
+  if (!range) return null;
+  const hit = avail.find((b) => b.day === parts[0] && Math.min(b.end, range[1]) - Math.max(b.start, range[0]) >= 1);
+  if (!hit) return null;
+  return DAY_NAMES[parts[0]] + " " + fmtHour(Math.max(hit.start, range[0])) + "–" + fmtHour(Math.min(hit.end, range[1]));
+};
+
+const matchBriefs = (avail, skillNames) => {
+  const capacity = totalHoursOf(avail);
+  return BRIEFS
+    .filter((b) => skillNames.includes(b.skill) && b.duration <= capacity && b.slots.some((sl) => windowForSlot(avail, sl)))
+    .map((b) => ({
+      ...b,
+      freeSlotLabel: windowForSlot(avail, b.slots.find((sl) => windowForSlot(avail, sl))),
+      ratio: ratioOf(b.skill),
+      ratioLabel: ratioOf(b.skill).toFixed(1) + "×",
     }))
-    .sort((a, b) => b.ratio - a.ratio || a.id - b.id);
-}
+    .sort((a, c) => c.ratio - a.ratio || a.id - c.id);
+};
 
-function generateInsight(profile) {
-  const ranked = uniqueKnownSkills(profile.skills)
-    .map(skill => ({ skill, ratio: ratioOf(skill), rate: marketBySkill[skill].avgRate }))
-    .sort((a, b) => b.ratio - a.ratio || a.skill.localeCompare(b.skill));
-  if (!ranked.length) return "Select a skill to compare demand and find compatible work windows.";
-  const weak = [...ranked].sort((a, b) => a.ratio - b.ratio || a.skill.localeCompare(b.skill))[0];
-  if (weak.ratio < 1) {
-    const better = [...skillMarket].filter(item => item.skill !== weak.skill).sort((a, b) => b.avgRate - a.avgRate || a.skill.localeCompare(b.skill))[0];
-    const more = weak.rate > 0 ? Math.round(((better.avgRate - weak.rate) / weak.rate) * 100) : 0;
-    return `${weak.skill} is oversupplied at ${weak.ratio.toFixed(1)}×. In this sample, ${better.skill} has a ${more}% higher average rate.`;
+class App extends React.Component {
+  state = {
+    viewMode: "client",
+    freelancerTab: "overview",
+    profile: {
+      name: "Priya N.",
+      university: "University of Manchester",
+      course: "BSc Computer Science",
+      skills: [{ skill: "React", level: "intermediate" }, { skill: "UI Design", level: "beginner" }],
+      avail: SEED_AVAIL,
+    },
+    search: "",
+    activeCategory: "All",
+    sortBy: "recommended",
+    gigs: SEED_GIGS,
+    nextGigId: 17,
+    cart: [],
+    cartOpen: false,
+    selectedGigId: null,
+    selectedTierIdx: 0,
+    checkoutOpen: false,
+    orderPlaced: false,
+    checkoutName: "",
+    checkoutEmail: "",
+    newGigOpen: false,
+    newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] },
+  };
+
+  setViewClient = () => this.setState({ viewMode: "client" });
+  setViewFreelancer = () => this.setState({ viewMode: "freelancer" });
+  onSearchChange = (e) => this.setState({ search: e.target.value });
+  onSortChange = (e) => this.setState({ sortBy: e.target.value });
+  setCategory = (cat) => this.setState({ activeCategory: cat });
+
+  toggleCart = () => this.setState((s) => ({ cartOpen: !s.cartOpen }));
+
+  addToCart = (gigId, tierIdx) => {
+    this.setState((s) => {
+      const key = gigId + "-" + tierIdx;
+      const existing = s.cart.find((l) => l.key === key);
+      const cart = existing
+        ? s.cart.map((l) => (l.key === key ? { ...l, qty: l.qty + 1 } : l))
+        : [...s.cart, { key, gigId, tierIdx, qty: 1 }];
+      return { cart, cartOpen: true };
+    });
+  };
+
+  changeQty = (key, delta) => this.setState((s) => ({
+    cart: s.cart.map((l) => (l.key === key ? { ...l, qty: Math.max(1, l.qty + delta) } : l)),
+  }));
+
+  removeCartLine = (key) => this.setState((s) => ({ cart: s.cart.filter((l) => l.key !== key) }));
+
+  openGig = (id) => this.setState({ selectedGigId: id, selectedTierIdx: 0 });
+  closeGig = () => this.setState({ selectedGigId: null });
+  selectTier = (idx) => this.setState({ selectedTierIdx: idx });
+  addSelectedTier = () => {
+    this.addToCart(this.state.selectedGigId, this.state.selectedTierIdx);
+    this.setState({ selectedGigId: null });
+  };
+
+  openCheckout = () => this.setState({ checkoutOpen: true, cartOpen: false, orderPlaced: false });
+  closeCheckout = () => this.setState({ checkoutOpen: false, cartOpen: true });
+  onCheckoutNameChange = (e) => this.setState({ checkoutName: e.target.value });
+  onCheckoutEmailChange = (e) => this.setState({ checkoutEmail: e.target.value });
+  placeOrder = () => this.setState({ orderPlaced: true });
+  finishCheckout = () => this.setState({ checkoutOpen: false, orderPlaced: false, cart: [], checkoutName: "", checkoutEmail: "" });
+
+  openNewGig = () => this.setState({ newGigOpen: true });
+  closeNewGig = () => this.setState({ newGigOpen: false, newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] } });
+  onNewGigTitleChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, title: e.target.value } }));
+  onNewGigCategoryChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, category: e.target.value } }));
+  onNewGigDescChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, desc: e.target.value } }));
+  setNewGigTierPrice = (idx, v) => this.setState((s) => {
+    const tierPrices = [...s.newGig.tierPrices]; tierPrices[idx] = v;
+    return { newGig: { ...s.newGig, tierPrices } };
+  });
+  setNewGigTierDelivery = (idx, v) => this.setState((s) => {
+    const tierDeliveries = [...s.newGig.tierDeliveries]; tierDeliveries[idx] = v;
+    return { newGig: { ...s.newGig, tierDeliveries } };
+  });
+
+  submitNewGig = () => {
+    const { newGig, gigs, nextGigId } = this.state;
+    if (!newGig.title.trim()) return;
+    const names = ["Basic", "Standard", "Premium"];
+    const tiers = names.map((name, i) => ({
+      name,
+      price: Number(newGig.tierPrices[i]) || 0,
+      delivery: newGig.tierDeliveries[i] || "—",
+    }));
+    const gig = {
+      id: nextGigId, category: newGig.category, title: newGig.title.trim(),
+      freelancer: FREELANCERS.priya, desc: newGig.desc.trim() || "No description yet.",
+      tiers, owner: true, active: true, orders: 0, earnings: 0,
+    };
+    this.setState({
+      gigs: [...gigs, gig], nextGigId: nextGigId + 1, newGigOpen: false,
+      newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] },
+    });
+  };
+
+  setFreelancerTab = (tab) => this.setState({ freelancerTab: tab });
+
+  toggleSkill = (skill) => this.setState((s) => {
+    const has = s.profile.skills.some((x) => x.skill === skill);
+    const skills = has
+      ? s.profile.skills.filter((x) => x.skill !== skill)
+      : [...s.profile.skills, { skill, level: "beginner" }];
+    return { profile: { ...s.profile, skills } };
+  });
+
+  componentDidMount() {
+    window.addEventListener("pointermove", this.onDragMove);
+    window.addEventListener("pointerup", this.onDragEnd);
   }
-  const top = ranked[0];
-  const hours = clampHours(profile.weeklyHours);
-  if (hours < 2) return `${top.skill} work is in ${top.ratio.toFixed(1)}× demand. Add at least 2 weekly hours to unlock a gig.`;
-  const gigsPerWeek = Math.max(1, Math.floor(hours / 4));
-  return `${top.skill} work is in ${top.ratio.toFixed(1)}× demand. Your ${hours} free hours could cover about ${gigsPerWeek} typical gig${gigsPerWeek === 1 ? "" : "s"} a week.`;
-}
+  componentWillUnmount() {
+    window.removeEventListener("pointermove", this.onDragMove);
+    window.removeEventListener("pointerup", this.onDragEnd);
+  }
 
-function computeStrength(profile) {
-  const identity = [profile.name, profile.university, profile.course, profile.gradYear, profile.headline];
-  const identityScore = identity.filter(value => typeof value === "string" && value.trim()).length / identity.length;
-  const score = (uniqueKnownSkills(profile.skills).length ? 30 : 0)
-    + (clampHours(profile.weeklyHours) > 0 ? 30 : 0)
-    + ((profile.experience || []).length ? 20 : 0)
-    + ((profile.certifications || []).length ? 10 : 0)
-    + identityScore * 10;
-  return Math.min(100, Math.max(0, Math.round(score)));
-}
+  hourFromX = (rect, clientX) => {
+    const h = Math.round(((clientX - rect.left) / rect.width) * 24);
+    return Math.max(0, Math.min(24, h));
+  };
 
-// Lightweight acceptance checks stay in the shipped file for fast demo diagnostics.
-console.assert(SKILLS.length === 8 && SLOTS.length === 21 && gigs.length === 12, "Seed sizes must remain 8/21/12");
-console.assert(ratioOf("React").toFixed(1) === "3.2", "React ratio");
-console.assert(ratioOf("Writing").toFixed(1) === "2.3", "Writing ratio");
-console.assert(ratioOf("Data Entry").toFixed(1) === "0.8", "Data Entry ratio");
-console.assert(ratioOf("Unknown") === 0, "Unknown markets must be guarded");
-console.assert(matchGigs(seedProfile).map(gig => gig.id).join(",") === "1,2,5,6", "Seed match order");
-console.assert(matchGigs({ ...seedProfile, weeklyHours: 0 }).length === 0, "Zero hours must return no matches");
-console.assert(!generateInsight({ ...seedProfile, weeklyHours: 0 }).includes("could cover"), "Zero hours must not claim capacity");
-console.assert(computeStrength(seedProfile) >= 0 && computeStrength(seedProfile) <= 100, "Strength bounds");
-console.assert(matchGigs({ ...seedProfile, busy: [...seedProfile.busy, "BAD-SLOT"] }).length === 4, "Unknown busy slots ignored");
+  startCreate = (day) => (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const h = this.hourFromX(rect, e.clientX);
+    const start = Math.min(23, h);
+    const id = "a" + Date.now() + Math.random().toString(36).slice(2, 6);
+    this.drag = { mode: "create", id, rect, anchor: start };
+    e.preventDefault();
+    this.setState((s) => ({ profile: { ...s.profile, avail: [...(s.profile.avail || []), { id, day, start, end: start + 1 }] } }));
+  };
 
-// === COMPONENTS ===
-function ProfileSummary({ profile }) {
-  const cert = profile.certifications[0];
-  const experience = profile.experience[0];
-  return (
-    <section className="card" aria-labelledby="profile-title">
-      <div className="profile-summary">
-        <div className="avatar" aria-hidden="true">{initials(profile.name)}</div>
-        <div>
-          <strong id="profile-title">{profile.name}</strong>
-          <p>{profile.course}, {profile.university} · graduating {profile.gradYear}</p>
-          <p>{profile.headline}</p>
-        </div>
-        <div className="credibility">
-          {experience.role} at {experience.org} · {cert.title}, {cert.issuer} {cert.year}
-        </div>
-      </div>
-    </section>
-  );
-}
+  startResize = (id, edge) => (e) => {
+    e.stopPropagation();
+    const track = e.currentTarget.closest("[data-daytrack]");
+    if (!track) return;
+    this.drag = { mode: edge === "start" ? "resize-start" : "resize-end", id, rect: track.getBoundingClientRect() };
+    e.preventDefault();
+  };
 
-function SkillsBlock({ profile, onToggle, onLevel }) {
-  return (
-    <div className="block">
-      <h3>Skills</h3>
-      <p className="hint">Choose what you can offer. Ratios update the chart, insight, and matches immediately.</p>
-      <div className="skills">
-        {SKILLS.map(skill => {
-          const selected = profile.skills.find(item => item.skill === skill);
-          return (
-            <div className="skill-row" key={skill}>
-              <button className="skill-toggle" type="button" aria-pressed={Boolean(selected)} onClick={() => onToggle(skill)}>
-                <span>{skill}</span><span className="skill-ratio">{ratioOf(skill).toFixed(1)}×</span>
-              </button>
-              {selected && (
-                <select className="level" aria-label={`${skill} level`} value={selected.level} onChange={event => onLevel(skill, event.target.value)}>
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
+  onDragMove = (e) => {
+    const d = this.drag;
+    if (!d) return;
+    const h = this.hourFromX(d.rect, e.clientX);
+    this.setState((s) => ({
+      profile: {
+        ...s.profile,
+        avail: (s.profile.avail || []).map((b) => {
+          if (b.id !== d.id) return b;
+          if (d.mode === "create") {
+            const st = Math.min(d.anchor, h);
+            const en = Math.max(d.anchor, h);
+            return { ...b, start: Math.min(st, 23), end: Math.max(Math.min(st, 23) + 1, en) };
+          }
+          if (d.mode === "resize-start") return { ...b, start: Math.min(h, b.end - 1) };
+          return { ...b, end: Math.max(h, b.start + 1) };
+        }),
+      },
+    }));
+  };
+
+  onDragEnd = () => {
+    if (!this.drag) return;
+    this.drag = null;
+    this.setState((s) => ({ profile: { ...s.profile, avail: mergeAvail(s.profile.avail || []) } }));
+  };
+
+  removeBlock = (id) => this.setState((s) => ({ profile: { ...s.profile, avail: (s.profile.avail || []).filter((b) => b.id !== id) } }));
+
+  togglePauseGig = (id) => this.setState((s) => ({
+    gigs: s.gigs.map((g) => (g.id === id ? { ...g, active: !g.active } : g)),
+  }));
+
+  renderVals() {
+    const s = this.state;
+    const fromPrice = (gig) => Math.min(...gig.tiers.map((t) => t.price));
+
+    const categoryChips = ["All", ...SKILL_CATEGORIES].map((cat) => ({
+      label: cat,
+      cls: "tag " + (s.activeCategory === cat ? "tag-accent" : "tag-outline"),
+      select: () => this.setCategory(cat),
+    }));
+
+    let list = s.gigs.filter((g) => g.active !== false);
+    if (s.activeCategory !== "All") list = list.filter((g) => g.category === s.activeCategory);
+    if (s.search.trim()) {
+      const q = s.search.trim().toLowerCase();
+      list = list.filter((g) => g.title.toLowerCase().includes(q) || g.category.toLowerCase().includes(q) || g.freelancer.name.toLowerCase().includes(q));
+    }
+    if (s.sortBy === "price-asc") list = [...list].sort((a, b) => fromPrice(a) - fromPrice(b));
+    else if (s.sortBy === "price-desc") list = [...list].sort((a, b) => fromPrice(b) - fromPrice(a));
+    else if (s.sortBy === "rating") list = [...list].sort((a, b) => b.freelancer.rating - a.freelancer.rating);
+
+    const filteredGigs = list.map((g) => ({
+      ...g,
+      fromPrice: fromPrice(g),
+      open: () => this.openGig(g.id),
+      quickAdd: (e) => { e.stopPropagation(); this.addToCart(g.id, 0); },
+    }));
+
+    const resultsLabel = filteredGigs.length + " gig" + (filteredGigs.length === 1 ? "" : "s") + (s.activeCategory === "All" ? "" : " in " + s.activeCategory);
+
+    const cartLines = s.cart.map((l) => {
+      const gig = s.gigs.find((g) => g.id === l.gigId);
+      const tier = gig ? gig.tiers[l.tierIdx] : null;
+      return {
+        key: l.key, qty: l.qty,
+        title: gig ? gig.title : "Removed gig",
+        tierName: tier ? tier.name : "",
+        price: tier ? tier.price : 0,
+        lineTotal: tier ? tier.price * l.qty : 0,
+        inc: () => this.changeQty(l.key, 1),
+        dec: () => this.changeQty(l.key, -1),
+        remove: () => this.removeCartLine(l.key),
+      };
+    });
+    const cartCount = cartLines.reduce((n, l) => n + l.qty, 0);
+    const cartSubtotal = cartLines.reduce((n, l) => n + l.lineTotal, 0);
+
+    let selectedGig = null;
+    const gigForDetail = s.selectedGigId ? s.gigs.find((g) => g.id === s.selectedGigId) : null;
+    if (gigForDetail) {
+      selectedGig = {
+        ...gigForDetail,
+        tierOptions: gigForDetail.tiers.map((t, i) => ({
+          name: t.name, price: t.price, delivery: t.delivery,
+          cls: "card blueprint tier-opt" + (i === s.selectedTierIdx ? " tier-selected" : ""),
+          select: () => this.selectTier(i),
+        })),
+      };
+    }
+
+    const myGigs = s.gigs.filter((g) => g.owner).map((g) => ({
+      ...g, fromPrice: fromPrice(g),
+      statusLabel: g.active !== false ? "Active" : "Paused",
+      statusCls: g.active !== false ? "tag-accent" : "tag-neutral",
+      toggleLabel: g.active !== false ? "Pause" : "Resume",
+      rowOpacity: g.active !== false ? 1 : 0.55,
+      togglePause: () => this.togglePauseGig(g.id),
+    }));
+    const stats = {
+      active: myGigs.filter((g) => g.active !== false).length,
+      orders: myGigs.reduce((n, g) => n + g.orders, 0),
+      earnings: myGigs.reduce((n, g) => n + g.earnings, 0),
+    };
+
+    const newGigTierRows = ["Basic", "Standard", "Premium"].map((name, i) => ({
+      name,
+      price: s.newGig.tierPrices[i],
+      delivery: s.newGig.tierDeliveries[i],
+      onPrice: (e) => this.setNewGigTierPrice(i, e.target.value),
+      onDelivery: (e) => this.setNewGigTierDelivery(i, e.target.value),
+    }));
+
+    const p = { ...s.profile, avail: s.profile.avail || [], skills: s.profile.skills || [] };
+    const mySkillNames = p.skills.map((x) => x.skill);
+
+    const skillChips = SKILL_CATEGORIES.map((skill) => ({
+      label: skill,
+      ratio: ratioOf(skill).toFixed(1) + "×",
+      cls: "tag " + (mySkillNames.includes(skill) ? "tag-accent" : "tag-outline"),
+      toggle: () => this.toggleSkill(skill),
+    }));
+
+    const demandRows = SKILL_MARKET
+      .map((m) => {
+        const r = m.demand / m.supply;
+        const mine = mySkillNames.includes(m.skill);
+        return {
+          skill: m.skill,
+          value: r.toFixed(1) + "×",
+          rate: "avg £" + m.avgRate + "/h",
+          barWidth: Math.min(100, (r / 3.6) * 100) + "%",
+          barColor: r >= 1.5 ? "var(--color-accent-700)" : r < 1.0 ? "var(--color-neutral-400)" : "var(--color-accent-300)",
+          labelWeight: mine ? 700 : 400,
+          mineMark: mine ? "yours" : "",
+        };
+      })
+      .sort((a, b) => parseFloat(b.value) - parseFloat(a.value));
+
+    const availByDay = DAYS.map((day) => ({
+      day,
+      startCreate: this.startCreate(day),
+      blocks: p.avail.filter((b) => b.day === day).map((b) => ({
+        id: b.id,
+        leftPct: (b.start / 24) * 100 + "%",
+        widthPct: ((b.end - b.start) / 24) * 100 + "%",
+        label: fmtHour(b.start) + "–" + fmtHour(b.end),
+        wide: b.end - b.start >= 3,
+        resizeStart: this.startResize(b.id, "start"),
+        resizeEnd: this.startResize(b.id, "end"),
+        remove: () => this.removeBlock(b.id),
+        removeOnRightClick: (e) => { e.preventDefault(); e.stopPropagation(); this.removeBlock(b.id); },
+      })),
+    }));
+    const hourTicks = [0, 4, 8, 12, 16, 20, 24].map((h) => ({
+      label: fmtHour(h),
+      leftPct: (h / 24) * 100 + "%",
+      shift: h === 0 ? "translateX(0)" : h === 24 ? "translateX(-100%)" : "translateX(-50%)",
+    }));
+    const totalHours = totalHoursOf(p.avail);
+    const windowCount = p.avail.length;
+
+    const matchedBriefs = matchBriefs(p.avail, mySkillNames);
+
+    let insight;
+    if (mySkillNames.length === 0) {
+      insight = "Add a skill to see where demand is running ahead of supply.";
+    } else {
+      const ranked = mySkillNames
+        .filter((sk) => MARKET_BY_SKILL[sk])
+        .map((sk) => ({ skill: sk, ratio: ratioOf(sk), rate: MARKET_BY_SKILL[sk].avgRate }))
+        .sort((a, c) => c.ratio - a.ratio);
+      const top = ranked[0];
+      const weak = ranked[ranked.length - 1];
+      if (weak.ratio < 1.0) {
+        const better = SKILL_MARKET.filter((m) => m.skill !== weak.skill).sort((a, c) => c.avgRate - a.avgRate)[0];
+        const pct = Math.round(((better.avgRate - weak.rate) / weak.rate) * 100);
+        insight = weak.skill + " is oversupplied at " + weak.ratio.toFixed(1) + "×. In this sample, " + better.skill + " has a " + pct + "% higher average rate.";
+      } else if (totalHours < 2) {
+        insight = top.skill + " work is in " + top.ratio.toFixed(1) + "× demand. Draw at least 2 hours of availability to take on a gig.";
+      } else {
+        const n = Math.max(1, Math.floor(totalHours / 4));
+        insight = top.skill + " work is in " + top.ratio.toFixed(1) + "× demand. The " + totalHours + " hours you've declared cover about " + n + " typical gig" + (n === 1 ? "" : "s") + " a week.";
+      }
+    }
+
+    return {
+      isClient: s.viewMode === "client",
+      isFreelancer: s.viewMode === "freelancer",
+      isOverviewTab: s.viewMode === "freelancer" && s.freelancerTab === "overview",
+      isListingsTab: s.viewMode === "freelancer" && s.freelancerTab === "listings",
+      showOverviewTab: () => this.setFreelancerTab("overview"),
+      showListingsTab: () => this.setFreelancerTab("listings"),
+      profile: p, skillChips, demandRows, availByDay, hourTicks, totalHours, windowCount,
+      matchedBriefs, matchedCount: matchedBriefs.length, noMatches: matchedBriefs.length === 0, insight,
+      setViewClient: this.setViewClient, setViewFreelancer: this.setViewFreelancer,
+      search: s.search, onSearchChange: this.onSearchChange,
+      sortBy: s.sortBy, onSortChange: this.onSortChange,
+      categoryChips, filteredGigs, resultsLabel, noResults: filteredGigs.length === 0,
+      cartOpen: s.cartOpen, toggleCart: this.toggleCart, cartCount,
+      cartEmpty: cartLines.length === 0, cartLines, cartSubtotal,
+      selectedGig, closeGig: this.closeGig, addSelectedTier: this.addSelectedTier,
+      checkoutOpen: s.checkoutOpen, checkoutPending: !s.orderPlaced, orderPlaced: s.orderPlaced,
+      openCheckout: this.openCheckout, closeCheckout: this.closeCheckout,
+      placeOrder: this.placeOrder, finishCheckout: this.finishCheckout,
+      checkoutName: s.checkoutName, checkoutEmail: s.checkoutEmail,
+      onCheckoutNameChange: this.onCheckoutNameChange, onCheckoutEmailChange: this.onCheckoutEmailChange,
+      myGigs, stats,
+      openNewGig: this.openNewGig, closeNewGig: this.closeNewGig, newGigOpen: s.newGigOpen, newGig: s.newGig,
+      skillCategories: SKILL_CATEGORIES,
+      onNewGigTitleChange: this.onNewGigTitleChange,
+      onNewGigCategoryChange: this.onNewGigCategoryChange,
+      onNewGigDescChange: this.onNewGigDescChange,
+      newGigTierRows, submitNewGig: this.submitNewGig,
+    };
+  }
+
+  render() {
+    const v = this.renderVals();
+    return (
+      <div style={S("min-height:100vh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)")}>
+
+        <nav className="nav" style={S("position:sticky;top:0;z-index:20;background:var(--color-bg)")}>
+          <span className="nav-brand">Campus<span style={S("color:var(--color-accent-700)")}>Gigs</span></span>
+          <div className="seg" role="radiogroup" aria-label="View mode" style={S("flex:0 0 auto")}>
+            <label className="seg-opt" style={S("min-width:88px;justify-content:center")}>
+              <input type="radio" name="viewmode" checked={v.isClient} onChange={v.setViewClient} />Browse
+            </label>
+            <label className="seg-opt" style={S("min-width:88px;justify-content:center")}>
+              <input type="radio" name="viewmode" checked={v.isFreelancer} onChange={v.setViewFreelancer} />My gigs
+            </label>
+          </div>
+          <div style={S("margin-left:auto;display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:0 0 auto;width:330px")}>
+            {v.isClient && (
+              <React.Fragment>
+                <input className="input" style={S("width:220px")} placeholder="Search gigs, skills, people" value={v.search} onChange={v.onSearchChange} aria-label="Search gigs" />
+                <button type="button" className="btn btn-ghost" style={S("position:relative")} onClick={v.toggleCart}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 2-1.63l1.65-8.37H5.12"/></svg>
+                  Cart
+                  {!!v.cartCount && <span className="cart-badge">{v.cartCount}</span>}
+                </button>
+              </React.Fragment>
+            )}
+            {v.isFreelancer && (
+              <div style={S("display:flex;align-items:center;gap:8px;font-size:13px")}>
+                <span style={S("color:var(--color-neutral-700)")}>Seller mode</span>
+                <div style={S("width:28px;height:28px;border-radius:50%;background:var(--color-accent-700);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center")}>PN</div>
+                <span style={S("font-weight:600")}>Priya N.</span>
+              </div>
+            )}
+          </div>
+        </nav>
+
+        {v.isClient && (
+          <div style={S("max-width:1200px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8)")}>
+            <h1 style={S("font-family:var(--font-heading);font-size:34px;margin:0 0 4px")}>Gigs from your campus</h1>
+            <p style={S("margin:0 0 var(--space-4);color:var(--color-neutral-700);font-size:14px")}>Packaged services from fellow students. Pick a tier, add to cart, done — no bidding, no back-and-forth.</p>
+
+            <div style={S("display:flex;gap:8px;flex-wrap:wrap;margin-bottom:var(--space-3)")}>
+              {v.categoryChips.map((cat) => (
+                <button key={cat.label} type="button" className={cat.cls} onClick={cat.select}>{cat.label}</button>
+              ))}
+            </div>
+
+            <div style={S("display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-4);flex-wrap:wrap;gap:8px")}>
+              <span style={S("font-size:13px;color:var(--color-neutral-700)")}>{v.resultsLabel}</span>
+              <select className="input" style={S("width:auto")} value={v.sortBy} onChange={v.onSortChange} aria-label="Sort gigs">
+                <option value="recommended">Recommended</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+                <option value="rating">Top rated</option>
+              </select>
+            </div>
+
+            {v.noResults && (
+              <p style={S("color:var(--color-neutral-700);font-size:14px")}>No gigs match that search. Try a different category or keyword.</p>
+            )}
+
+            <div style={S("display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--space-4)")}>
+              {v.filteredGigs.map((gig) => (
+                <div key={gig.id} className="card blueprint gigcard-cat">
+                  <Corners />
+                  <div onClick={gig.open} style={S("cursor:pointer")}>
+                    <ImageSlot height="140px" label={gig.category} />
+                    <div style={S("padding:var(--space-3) var(--space-3) 0")}>
+                      <span className="tag tag-accent" style={S("margin-bottom:8px;display:inline-block")}>{gig.category}</span>
+                      <div className="card-title" style={S("font-size:15px;line-height:1.3")}>{gig.title}</div>
+                    </div>
+                  </div>
+                  <div style={S("padding:10px var(--space-3) 0;display:flex;align-items:center;gap:8px")}>
+                    <div style={S("width:26px;height:26px;border-radius:50%;background:var(--color-accent-700);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto")}>{gig.freelancer.initials}</div>
+                    <div style={S("font-size:12px;line-height:1.3")}>
+                      <div style={S("font-weight:600")}>{gig.freelancer.name}</div>
+                      <div style={S("color:var(--color-neutral-700)")}>★ {gig.freelancer.rating} ({gig.freelancer.reviews})</div>
+                    </div>
+                  </div>
+                  <div style={S("display:flex;justify-content:space-between;align-items:center;padding:var(--space-3);margin-top:auto")}>
+                    <div><span style={S("font-size:11px;color:var(--color-neutral-700)")}>From</span> <strong style={S("font-family:var(--font-heading);font-size:19px")}>${gig.fromPrice}</strong></div>
+                    <button type="button" className="btn btn-primary blueprint" onClick={gig.quickAdd}><Corners />Add to cart</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {v.isFreelancer && (
+          <div style={S("max-width:1000px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8)")}>
+            <div style={S("display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--space-4);flex-wrap:wrap;gap:10px")}>
+              <div>
+                <h1 style={S("font-family:var(--font-heading);font-size:30px;margin:0 0 4px")}>Freelancer dashboard</h1>
+                <p style={S("margin:0;color:var(--color-neutral-700);font-size:13px")}>Priya N. · BSc Computer Science, University of Manchester</p>
+              </div>
+              <button type="button" className="btn btn-primary blueprint" onClick={v.openNewGig}><Corners />+ Post a gig</button>
+            </div>
+
+            <div style={S("display:flex;gap:8px;margin-bottom:var(--space-6);border-bottom:1px solid var(--color-divider);padding-bottom:0")}>
+              <button type="button" className="tab-btn" data-on={String(v.isOverviewTab)} onClick={v.showOverviewTab}>Overview</button>
+              <button type="button" className="tab-btn" data-on={String(v.isListingsTab)} onClick={v.showListingsTab}>My listings</button>
+            </div>
+
+            {v.isOverviewTab && (
+              <React.Fragment>
+                <div style={S("border:1px solid var(--color-accent-700);background:var(--color-accent-100);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-6);display:flex;gap:10px;align-items:flex-start")}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-700)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={S("flex:0 0 auto;margin-top:2px")}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+                  <p style={S("margin:0;font-size:14px;line-height:1.45;color:var(--color-accent-900)")}>{v.insight}</p>
+                </div>
+
+                <div style={S("display:grid;grid-template-columns:1fr;gap:var(--space-4);margin-bottom:var(--space-6)")}>
+                  <div className="card blueprint">
+                    <Corners />
+                    <div className="card-kicker">Availability</div>
+                    <div className="card-title" style={S("font-size:17px;margin-bottom:2px")}>Hours you can work</div>
+                    <p className="card-body" style={S("margin:0 0 var(--space-3)")}>Drag across a day to draw a window, pull either edge to resize it, right-click (or double-click) to delete. Matching reads these hours directly.</p>
+                    <div style={S("overflow-x:auto;padding-bottom:4px")}>
+                      <div style={S("min-width:340px")}>
+                        <div style={S("display:grid;grid-template-columns:34px 1fr;gap:6px;margin-bottom:2px")}>
+                          <div></div>
+                          <div style={S("position:relative;height:13px")}>
+                            {v.hourTicks.map((tick) => (
+                              <span key={tick.leftPct} style={S("position:absolute;left:" + tick.leftPct + ";transform:" + tick.shift + ";font-size:9.5px;color:var(--color-neutral-700);white-space:nowrap")}>{tick.label}</span>
+                            ))}
+                          </div>
+                        </div>
+                        {v.availByDay.map((row) => (
+                          <div key={row.day} style={S("display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:center;margin-bottom:4px")}>
+                            <span style={S("font-size:11px;font-weight:600")}>{row.day}</span>
+                            <div className="day-track" data-daytrack="true" onPointerDown={row.startCreate}>
+                              {row.blocks.map((b) => (
+                                <div key={b.id} className="avail-block" style={S("left:" + b.leftPct + ";width:" + b.widthPct)}
+                                     onDoubleClick={b.remove} onContextMenu={b.removeOnRightClick} title={b.label + " — right-click to delete"}>
+                                  <span style={S("pointer-events:none;overflow:hidden;white-space:nowrap")}>{b.label}</span>
+                                  <div className="avail-handle" style={S("left:-4px")} onPointerDown={b.resizeStart}></div>
+                                  <div className="avail-handle" style={S("right:-4px")} onPointerDown={b.resizeEnd}></div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="card-meta" style={S("margin-top:10px")}><span>{v.totalHours} h declared</span><span>·</span><span>{v.windowCount} windows</span></div>
+                  </div>
+
+                  <div className="card blueprint">
+                    <Corners />
+                    <div className="card-kicker">Market</div>
+                    <div className="card-title" style={S("font-size:17px;margin-bottom:2px")}>Demand ÷ supply</div>
+                    <p className="card-body" style={S("margin:0 0 var(--space-3)")}>Past the dashed line there is more work than freelancers. Your skills are in bold.</p>
+                    <div>
+                      {v.demandRows.map((row) => (
+                        <div key={row.skill} style={S("display:grid;grid-template-columns:minmax(72px,110px) 1fr 44px;gap:8px;align-items:center;margin-bottom:6px")}>
+                          <span style={S("font-size:12px;font-weight:" + row.labelWeight)}>{row.skill}</span>
+                          <div style={S("height:14px;border:1px solid var(--color-divider);position:relative")}>
+                            <div style={S("position:absolute;inset:0 auto 0 0;width:" + row.barWidth + ";background:" + row.barColor)}></div>
+                            <div style={S("position:absolute;top:-2px;bottom:-2px;left:27.8%;border-left:1px dashed var(--color-accent-700)")}></div>
+                          </div>
+                          <span style={S("font-size:12px;text-align:right")}>{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={S("display:flex;gap:6px;flex-wrap:wrap;margin-top:var(--space-3)")}>
+                      {v.skillChips.map((chip) => (
+                        <button key={chip.label} type="button" className={chip.cls} onClick={chip.toggle}>{chip.label} {chip.ratio}</button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={S("display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--space-3)")}>
+                  <h2 style={S("font-family:var(--font-heading);font-size:22px;margin:0")}>Client briefs that fit your timetable <span style={S("color:var(--color-accent-700)")}>{v.matchedCount}</span></h2>
+                </div>
+                <p style={S("margin:0 0 var(--space-3);font-size:12px;color:var(--color-neutral-700)")}>Each brief names a work window inside the hours you've declared, and fits your total weekly capacity.</p>
+                {v.noMatches && (
+                  <p style={S("font-size:13px;color:var(--color-neutral-700)")}>Nothing fits right now. Free up a band, raise your weekly hours, or add a skill above.</p>
+                )}
+                <div style={S("display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--space-3)")}>
+                  {v.matchedBriefs.map((brief) => (
+                    <div key={brief.id} className="card blueprint">
+                      <Corners />
+                      <div style={S("display:flex;justify-content:space-between;gap:8px;align-items:flex-start")}>
+                        <span className="tag tag-outline">{brief.skill}</span>
+                        <span className="tag tag-accent">{brief.ratioLabel}</span>
+                      </div>
+                      <div className="card-title" style={S("font-size:15px;margin-top:8px")}>{brief.title}</div>
+                      <div className="card-meta" style={S("margin-top:6px")}><span>£{brief.pay}</span><span>·</span><span>{brief.duration} h</span><span>·</span><span>{brief.client}</span></div>
+                      <p className="card-body" style={S("margin:8px 0 0;color:var(--color-accent-700)")}>Fits your {brief.freeSlotLabel}</p>
+                    </div>
+                  ))}
+                </div>
+              </React.Fragment>
+            )}
+
+            {v.isListingsTab && (
+              <React.Fragment>
+                <div style={S("display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-bottom:var(--space-6)")}>
+                  <div className="card blueprint"><Corners /><div className="card-kicker">Active gigs</div><div className="card-title" style={S("font-size:26px")}>{v.stats.active}</div></div>
+                  <div className="card blueprint"><Corners /><div className="card-kicker">Total orders</div><div className="card-title" style={S("font-size:26px")}>{v.stats.orders}</div></div>
+                  <div className="card blueprint"><Corners /><div className="card-kicker">Earnings</div><div className="card-title" style={S("font-size:26px")}>${v.stats.earnings}</div></div>
+                </div>
+
+                {v.myGigs.map((gig) => (
+                  <div key={gig.id} className="card blueprint" style={S("margin-bottom:var(--space-3);opacity:" + gig.rowOpacity)}>
+                    <Corners />
+                    <div style={S("display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap")}>
+                      <div>
+                        <span className="tag tag-accent" style={S("margin-bottom:6px;display:inline-block")}>{gig.category}</span>
+                        <div className="card-title" style={S("font-size:15px")}>{gig.title}</div>
+                        <div className="card-meta" style={S("margin-top:6px")}>
+                          <span>{gig.orders} orders</span><span>·</span><span>${gig.earnings} earned</span><span>·</span><span>From ${gig.fromPrice}</span>
+                        </div>
+                      </div>
+                      <div style={S("display:flex;flex-direction:column;gap:6px;align-items:flex-end")}>
+                        <span className={"tag " + gig.statusCls}>{gig.statusLabel}</span>
+                        <button type="button" className="btn btn-ghost" onClick={gig.togglePause}>{gig.toggleLabel}</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </React.Fragment>
+            )}
+          </div>
+        )}
+
+        {v.cartOpen && (
+          <React.Fragment>
+            <div style={S("position:fixed;inset:0;background:rgba(15,18,20,.5);z-index:40")} onClick={v.toggleCart}></div>
+            <div style={S("position:fixed;top:0;right:0;bottom:0;width:380px;max-width:92vw;background:var(--color-bg);z-index:41;box-shadow:var(--shadow-lg);display:flex;flex-direction:column;border-left:1px solid var(--color-divider)")}>
+              <div style={S("display:flex;justify-content:space-between;align-items:center;padding:var(--space-4);border-bottom:1px solid var(--color-divider)")}>
+                <h2 style={S("margin:0;font-family:var(--font-heading);font-size:20px")}>Your cart</h2>
+                <button type="button" className="btn btn-ghost" onClick={v.toggleCart}>Close</button>
+              </div>
+              <div style={S("flex:1;overflow-y:auto;padding:var(--space-3) var(--space-4)")}>
+                {v.cartEmpty && <p style={S("color:var(--color-neutral-700);font-size:13px")}>Nothing here yet — add a gig from the feed.</p>}
+                {v.cartLines.map((line) => (
+                  <div key={line.key} style={S("display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--color-divider)")}>
+                    <div style={S("flex:1")}>
+                      <div style={S("font-size:13px;font-weight:600")}>{line.title}</div>
+                      <div style={S("font-size:12px;color:var(--color-neutral-700);margin:2px 0 6px")}>{line.tierName} tier · ${line.price}</div>
+                      <div style={S("display:flex;align-items:center;gap:8px")}>
+                        <button type="button" className="btn btn-ghost" style={S("padding:2px 9px")} onClick={line.dec} aria-label="Decrease quantity">−</button>
+                        <span style={S("font-size:13px;min-width:16px;text-align:center")}>{line.qty}</span>
+                        <button type="button" className="btn btn-ghost" style={S("padding:2px 9px")} onClick={line.inc} aria-label="Increase quantity">+</button>
+                        <button type="button" className="btn btn-ghost" style={S("margin-left:auto;color:var(--color-accent-700)")} onClick={line.remove}>Remove</button>
+                      </div>
+                    </div>
+                    <div style={S("font-size:14px;font-weight:700;white-space:nowrap")}>${line.lineTotal}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={S("padding:var(--space-4);border-top:1px solid var(--color-divider)")}>
+                <div style={S("display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px")}><span>Subtotal</span><strong>${v.cartSubtotal}</strong></div>
+                <button type="button" className="btn btn-primary btn-block blueprint" onClick={v.openCheckout}><Corners />Checkout</button>
+              </div>
+            </div>
+          </React.Fragment>
+        )}
+
+        {v.selectedGig && (
+          <div className="dialog-backdrop" style={S("position:fixed;z-index:50")}>
+            <div className="dialog blueprint" style={S("max-width:480px")} role="dialog" aria-modal="true" aria-labelledby="ds-gig-title">
+              <Corners />
+              <ImageSlot height="180px" label={v.selectedGig.category} />
+              <span className="tag tag-accent" style={S("margin-bottom:8px;display:inline-block")}>{v.selectedGig.category}</span>
+              <div className="dialog-title" id="ds-gig-title">{v.selectedGig.title}</div>
+              <div style={S("display:flex;align-items:center;gap:8px;margin:8px 0")}>
+                <div style={S("width:26px;height:26px;border-radius:50%;background:var(--color-accent-700);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center")}>{v.selectedGig.freelancer.initials}</div>
+                <div style={S("font-size:12px")}><strong>{v.selectedGig.freelancer.name}</strong> · ★ {v.selectedGig.freelancer.rating} ({v.selectedGig.freelancer.reviews})</div>
+              </div>
+              <div className="dialog-body">{v.selectedGig.desc}</div>
+              <div style={S("display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:var(--space-3) 0")}>
+                {v.selectedGig.tierOptions.map((tier) => (
+                  <button key={tier.name} type="button" className={tier.cls} onClick={tier.select}>
+                    <div style={S("font-size:12px;font-weight:700")}>{tier.name}</div>
+                    <div style={S("font-size:15px;font-weight:700;margin:2px 0")}>${tier.price}</div>
+                    <div style={S("font-size:11px;color:var(--color-neutral-700)")}>{tier.delivery}</div>
+                  </button>
+                ))}
+              </div>
+              <div className="dialog-actions">
+                <button type="button" className="btn btn-secondary blueprint" onClick={v.closeGig}><Corners />Close</button>
+                <button type="button" className="btn btn-primary blueprint" onClick={v.addSelectedTier}><Corners />Add to cart</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {v.checkoutOpen && (
+          <div className="dialog-backdrop" style={S("position:fixed;z-index:50")}>
+            <div className="dialog blueprint" style={S("max-width:440px")} role="dialog" aria-modal="true">
+              <Corners />
+              {v.orderPlaced && (
+                <React.Fragment>
+                  <div className="dialog-title">Order placed</div>
+                  <div className="dialog-body">Your gigs have been requested. Freelancers will confirm delivery windows directly — this is a prototype, no real charge was made.</div>
+                  <div className="dialog-actions">
+                    <button type="button" className="btn btn-primary blueprint" onClick={v.finishCheckout}><Corners />Done</button>
+                  </div>
+                </React.Fragment>
+              )}
+              {v.checkoutPending && (
+                <React.Fragment>
+                  <div className="dialog-title">Checkout</div>
+                  <div style={S("max-height:180px;overflow-y:auto;margin:10px 0")}>
+                    {v.cartLines.map((line) => (
+                      <div key={line.key} style={S("display:flex;justify-content:space-between;font-size:13px;padding:5px 0")}>
+                        <span>{line.title} — {line.tierName} ×{line.qty}</span><strong>${line.lineTotal}</strong>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={S("display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding-top:8px;border-top:1px solid var(--color-divider);margin-bottom:var(--space-3)")}><span>Total</span><span>${v.cartSubtotal}</span></div>
+                  <div className="field"><label htmlFor="co-name">Name</label><input id="co-name" className="input" value={v.checkoutName} onChange={v.onCheckoutNameChange} /></div>
+                  <div className="field"><label htmlFor="co-email">Email</label><input id="co-email" className="input" type="email" value={v.checkoutEmail} onChange={v.onCheckoutEmailChange} /></div>
+                  <div className="dialog-actions">
+                    <button type="button" className="btn btn-secondary blueprint" onClick={v.closeCheckout}><Corners />Back to cart</button>
+                    <button type="button" className="btn btn-primary blueprint" onClick={v.placeOrder}><Corners />Place order</button>
+                  </div>
+                </React.Fragment>
               )}
             </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+          </div>
+        )}
 
-function AvailabilityBlock({ profile, onBusy, onHours }) {
-  const busy = validBusy(profile.busy);
-  return (
-    <div className="block">
-      <h3>Availability</h3>
-      <p className="hint">Mark when you cannot work. Gig slots are compatible work windows, not proof a full gig fits inside one band.</p>
-      <div className="availability-grid" role="group" aria-label="Busy times">
-        <div aria-hidden="true"></div>
-        {BANDS.map(band => <div className="grid-label" key={band}>{band}</div>)}
-        {DAYS.map(day => (
-          <React.Fragment key={day}>
-            <div className="grid-label day-label">{day}</div>
-            {BANDS.map(band => {
-              const slot = `${day}-${band}`;
-              const isBusy = busy.has(slot);
-              return (
-                <button
-                  className={`slot${isBusy ? " busy" : ""}`}
-                  type="button"
-                  key={slot}
-                  aria-pressed={isBusy}
-                  aria-label={`${slotLabel(slot)} — ${isBusy ? "busy" : "free"}`}
-                  onClick={() => onBusy(slot)}
-                >{isBusy ? "×" : ""}</button>
-              );
-            })}
-          </React.Fragment>
-        ))}
-      </div>
-      <label className="capacity">
-        <span>Weekly capacity</span>
-        <output>{clampHours(profile.weeklyHours)} h</output>
-        <input type="range" min="0" max="25" step="1" value={clampHours(profile.weeklyHours)} onChange={event => onHours(event.target.value)} />
-      </label>
-    </div>
-  );
-}
-
-function DemandChart({ profile }) {
-  const selected = new Set(uniqueKnownSkills(profile.skills));
-  const data = skillMarket
-    .map(item => ({ ...item, ratio: ratioOf(item.skill) }))
-    .sort((a, b) => b.ratio - a.ratio || a.skill.localeCompare(b.skill));
-  return (
-    <section className="card" aria-labelledby="chart-title">
-      <h2 id="chart-title">Skill demand vs supply</h2>
-      <p className="hint">Demand ÷ supply. The dashed marker is 1.0×; selected skills have a dark inset.</p>
-      <div className="chart" role="img" aria-label="Demand-to-supply ratios for eight freelance skills">
-        {data.map(item => {
-          const tone = item.ratio >= 1.5 ? "opportunity" : item.ratio < 1 ? "caution" : "";
-          return (
-            <div className="bar-row" key={item.skill}>
-              <span className="bar-name" title={item.skill}>{item.skill}</span>
-              <div className="bar-track">
-                <div className={`bar ${tone}${selected.has(item.skill) ? " selected" : ""}`} style={{ width: `${Math.min(100, item.ratio / 3.6 * 100)}%` }}></div>
+        {v.newGigOpen && (
+          <div className="dialog-backdrop" style={S("position:fixed;z-index:50")}>
+            <div className="dialog blueprint" style={S("max-width:480px;max-height:86vh;overflow-y:auto")} role="dialog" aria-modal="true">
+              <Corners />
+              <div className="dialog-title">Post a gig</div>
+              <div className="field"><label htmlFor="ng-title">Title</label><input id="ng-title" className="input" placeholder="I will..." value={v.newGig.title} onChange={v.onNewGigTitleChange} /></div>
+              <div className="field"><label htmlFor="ng-cat">Category</label>
+                <select id="ng-cat" className="input" value={v.newGig.category} onChange={v.onNewGigCategoryChange}>
+                  {v.skillCategories.map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
-              <span className="bar-value">{item.ratio.toFixed(1)}×</span>
+              <div className="field"><label htmlFor="ng-desc">Description</label><textarea id="ng-desc" className="input" rows="2" value={v.newGig.desc} onChange={v.onNewGigDescChange}></textarea></div>
+              <div style={S("font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:var(--space-3) 0 8px")}>Tiers</div>
+              {v.newGigTierRows.map((row) => (
+                <div key={row.name} style={S("display:flex;gap:6px;margin-bottom:8px;align-items:center")}>
+                  <span style={S("width:64px;font-size:12px;font-weight:600")}>{row.name}</span>
+                  <input className="input" style={S("width:80px")} placeholder="Price" value={row.price} onChange={row.onPrice} aria-label={row.name + " price"} />
+                  <input className="input" placeholder="Delivery, e.g. 2 days" value={row.delivery} onChange={row.onDelivery} aria-label={row.name + " delivery"} />
+                </div>
+              ))}
+              <div className="dialog-actions">
+                <button type="button" className="btn btn-secondary blueprint" onClick={v.closeNewGig}><Corners />Cancel</button>
+                <button type="button" className="btn btn-primary blueprint" onClick={v.submitNewGig}><Corners />Publish</button>
+              </div>
             </div>
-          );
-        })}
-      </div>
-      <p className="chart-key"><span>Green: opportunity (≥1.5×)</span><span>Amber: caution (&lt;1.0×)</span></p>
-    </section>
-  );
-}
+          </div>
+        )}
 
-function GigList({ matched, profile }) {
-  if (!matched.length) {
-    const selected = new Set(uniqueKnownSkills(profile.skills));
-    const suggestion = [...skillMarket]
-      .filter(item => !selected.has(item.skill))
-      .sort((a, b) => ratioOf(b.skill) - ratioOf(a.skill) || a.skill.localeCompare(b.skill))[0];
-    return (
-      <section className="card">
-        <h2>Matched gigs</h2>
-        <p className="empty">
-          No gigs fit your current skills, capacity, and free windows.
-          {suggestion && <> Try adding <strong>{suggestion.skill}</strong> — it is in {ratioOf(suggestion.skill).toFixed(1)}× demand.</>}
-        </p>
-      </section>
+      </div>
     );
   }
-  return (
-    <section className="card">
-      <div className="section-head">
-        <h2>Matched gigs</h2>
-        <span className="count">{matched.length} compatible</span>
-      </div>
-      {matched.map(gig => {
-        const tone = gig.ratio >= 1.5 ? "opportunity" : gig.ratio < 1 ? "caution" : "";
-        return (
-          <article className="gig" key={gig.id}>
-            <div className="gig-top">
-              <span className="gig-title">{gig.title}</span>
-              <span className={`ratio-badge ${tone}`}>{gig.ratio.toFixed(1)}×</span>
-            </div>
-            <div className="gig-meta"><span>{gig.skill}</span><span>£{gig.pay}</span><span>{gig.duration} h</span></div>
-            <div className="gig-fit">Compatible work window: {slotLabel(gig.freeSlot)}</div>
-          </article>
-        );
-      })}
-    </section>
-  );
-}
-
-function App() {
-  const [profile, setProfile] = useState(seedProfile);
-  const matched = useMemo(() => matchGigs(profile), [profile]);
-  const insight = useMemo(() => generateInsight(profile), [profile]);
-
-  const toggleSkill = skill => {
-    if (!SKILLS.includes(skill)) return;
-    setProfile(current => {
-      const normalized = current.skills.filter((item, index, all) =>
-        SKILLS.includes(item.skill) && all.findIndex(candidate => candidate.skill === item.skill) === index
-      );
-      const has = normalized.some(item => item.skill === skill);
-      return { ...current, skills: has ? normalized.filter(item => item.skill !== skill) : [...normalized, { skill, level: "beginner" }] };
-    });
-  };
-  const setSkillLevel = (skill, level) => {
-    if (!["beginner", "intermediate", "advanced"].includes(level)) return;
-    setProfile(current => ({ ...current, skills: current.skills.map(item => item.skill === skill ? { ...item, level } : item) }));
-  };
-  const toggleBusy = slot => {
-    if (!VALID_SLOTS.has(slot)) return;
-    setProfile(current => {
-      const clean = [...validBusy(current.busy)];
-      return { ...current, busy: clean.includes(slot) ? clean.filter(item => item !== slot) : [...clean, slot] };
-    });
-  };
-  const setHours = value => setProfile(current => ({ ...current, weeklyHours: clampHours(value) }));
-
-  return (
-    <div>
-      <header className="app-head">
-        <h1>SlotMatch</h1>
-        <p>Freelancing that fits your timetable</p>
-      </header>
-      <main>
-        <div className="insight" role="status">Insight: {insight}</div>
-        <DemandChart profile={profile} />
-        <GigList matched={matched} profile={profile} />
-        <ProfileSummary profile={profile} />
-        <section className="card">
-          <h2>Edit matching profile</h2>
-          <SkillsBlock profile={profile} onToggle={toggleSkill} onLevel={setSkillLevel} />
-          <AvailabilityBlock profile={profile} onBusy={toggleBusy} onHours={setHours} />
-        </section>
-        <p className="sdg-note">Built for SDG 8: decent work and economic growth for young people.</p>
-      </main>
-    </div>
-  );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+/* In-browser self-checks — the matching engine and the market numbers are the claims
+   the demo makes, so they fail loudly in the console if the data or logic drifts. */
+console.assert(SKILL_MARKET.length === 8 && SEED_GIGS.length === 16 && BRIEFS.length === 12, "seed sizes must stay 8/16/12");
+console.assert(ratioOf("React").toFixed(1) === "3.2" && ratioOf("Data Entry").toFixed(1) === "0.8", "market ratios");
+console.assert(ratioOf("Not a skill") === 0, "unknown skills must be guarded, not NaN");
+console.assert(totalHoursOf(SEED_AVAIL) === 29, "seed availability totals 29 h");
+console.assert(matchBriefs(SEED_AVAIL, ["React", "UI Design"]).map((b) => b.id).join(",") === "1,2,7", "seed match set and order");
+console.assert(matchBriefs([], ["React"]).length === 0, "no declared hours means no matches");
+console.assert(matchBriefs(SEED_AVAIL, []).length === 0, "no skills means no matches");
+console.assert(windowForSlot(SEED_AVAIL, "Tue-EVE") === "Tuesday 7pm–10pm", "window label names the real overlap");
+console.assert(windowForSlot(SEED_AVAIL, "Tue-AM") === null, "a band with no overlapping window does not match");
+console.assert(mergeAvail([{ id: "x", day: "Mon", start: 9, end: 12 }, { id: "y", day: "Mon", start: 11, end: 14 }]).length === 1, "overlapping windows merge on drag end");
 </script>
-<!--
-  DEPLOY: This is a single static file. Publish index.html on any static host
-  (for example Netlify Drop). No build step or server is required.
-  Local run: double-click index.html or use `start "" "index.html"` on Windows.
-  Demo safety: retain a tested hosted copy, warm the browser cache, and capture
-  a fallback screenshot or screen recording before judging.
--->
 </body>
 </html>
