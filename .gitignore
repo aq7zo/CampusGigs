@@ -1,2 +1,4 @@
 development/
 brainstorm.txt
+.playwright-cli/
+output/chrome-profile-file-check/
