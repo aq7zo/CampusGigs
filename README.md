@@ -16,7 +16,7 @@ How this one was built:
 | --- | --- |
 | Brainstorming, spec + planning | Claude Opus 5 (skills: Ponytail, Superpowers) |
 | Spec hardening | Codex 5.6 Sol |
-| Front-end design | Claude Design |
+| Front-end design | Claude Design Sonnet 5 |
 | Building | Codex 5.6 Sol |
 
 ## Running it
