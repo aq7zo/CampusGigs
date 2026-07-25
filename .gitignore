@@ -4,10 +4,10 @@ brainstorm.txt
 .playwright-cli/
 .impeccable/
 output/
-.github/workflows
-docs/superpowers
+
 
 # editors / OS
+.gitignore
 .vscode/
 .idea/
 Thumbs.db
