@@ -1,4 +1,13 @@
+# local tooling / scratch
 development/
 brainstorm.txt
 .playwright-cli/
-output/chrome-profile-file-check/
+.impeccable/
+output/
+
+# editors / OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
