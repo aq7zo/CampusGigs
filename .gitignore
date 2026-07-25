@@ -2,7 +2,6 @@
 hidden/
 
 # editors / OS
-.gitignore
 .vscode/
 .idea/
 Thumbs.db
