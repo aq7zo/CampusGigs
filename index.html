@@ -27,11 +27,60 @@
   .dialog { background: var(--color-bg) !important; }
   .tag-outline { cursor: pointer; border: none; }
   .tag-accent { cursor: pointer; border: none; }
+  .primary-nav { display: flex; align-self: stretch; border: 1px solid var(--color-divider); }
+  .primary-nav__item { min-width: 88px; min-height: 36px; padding: var(--space-2) var(--space-3); border: 0; border-right: 1px solid var(--color-divider); border-bottom: 2px solid transparent; background: transparent; color: var(--color-text); font: 500 14px/1.2 var(--font-body); cursor: pointer; }
+  .primary-nav__item:last-child { border-right: 0; }
+  .primary-nav__item:hover { background: color-mix(in srgb, var(--color-text) 5%, transparent); }
+  .primary-nav__item[aria-current="page"] { background: var(--color-accent-100); color: var(--color-accent-900); border-bottom-color: var(--color-accent-700); font-weight: 700; }
+  .nav-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; justify-content: flex-end; min-width: 0; }
+  .chat-layout { display: grid; grid-template-columns: minmax(240px, 320px) minmax(0, 1fr); max-width: 1200px; height: calc(100dvh - 58px); min-height: 520px; margin: 0 auto; padding: var(--space-4); }
+  .conversation-sidebar, .chat-thread { min-width: 0; border: 1px solid var(--color-divider); background: var(--color-bg); }
+  .conversation-sidebar { display: flex; flex-direction: column; border-right: 0; }
+  .conversation-sidebar__header, .chat-thread__header { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-divider); }
+  .conversation-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+  .conversation-item { width: 100%; min-height: 72px; padding: var(--space-3); border: 0; border-bottom: 1px solid var(--color-divider); background: transparent; color: inherit; text-align: left; font: inherit; cursor: pointer; }
+  .conversation-item:hover { background: color-mix(in srgb, var(--color-text) 5%, transparent); }
+  .conversation-item[aria-current="true"] { background: var(--color-accent-100); box-shadow: inset 0 0 0 1px var(--color-accent-700); }
+  .conversation-item__top { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .conversation-item__name { font-size: 13px; font-weight: 700; }
+  .conversation-item__time, .conversation-item__meta, .conversation-item__preview { color: var(--color-neutral-700); font-size: 11px; }
+  .conversation-item__preview { margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-thread { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .chat-thread__title { margin: 0; font: var(--font-heading-weight) 19px/1.2 var(--font-heading); }
+  .chat-thread__meta { margin-top: 3px; color: var(--color-neutral-700); font-size: 11px; }
+  .message-log { display: flex; flex-direction: column; gap: var(--space-3); overflow-y: auto; padding: var(--space-4); }
+  .message { max-width: min(72%, 64ch); align-self: flex-start; }
+  .message--mine { align-self: flex-end; }
+  .message__author { margin-bottom: 3px; color: var(--color-neutral-700); font-size: 10px; }
+  .message__body { padding: var(--space-2) var(--space-3); border: 1px solid var(--color-divider); background: var(--color-surface); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+  .message--mine .message__body { border-color: var(--color-accent-700); background: var(--color-accent-100); color: var(--color-accent-900); }
+  .message__time { display: block; margin-top: 3px; color: var(--color-neutral-700); font-size: 9px; text-align: right; }
+  .chat-composer { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-2); align-items: end; padding: var(--space-3); border-top: 1px solid var(--color-divider); }
+  .chat-composer textarea.input { min-height: 40px; max-height: 120px; resize: vertical; }
+  .chat-empty { display: grid; place-items: center; min-height: 280px; padding: var(--space-6); color: var(--color-neutral-700); text-align: center; font-size: 13px; }
+  .checkout-error { margin: var(--space-2) 0 0; color: #8a2f2f; font-size: 12px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
   /* Stands in for the design's <image-slot> placeholder — a drawn cover plate, no upload. */
   .img-slot { width: 100%; display: flex; align-items: center; justify-content: center;
     border-bottom: 1px solid var(--color-divider);
     background: repeating-linear-gradient(45deg, var(--color-accent-100) 0 9px, var(--color-accent-200) 9px 18px);
     color: var(--color-accent-800); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
+  @media (max-width: 720px) {
+    .nav { flex-wrap: wrap; gap: var(--space-2) !important; border-bottom: 1px solid var(--color-divider); }
+    .nav-brand { order: 1; }
+    .nav-actions { order: 2; width: auto !important; }
+    .primary-nav { order: 3; width: 100%; }
+    .primary-nav__item { flex: 1; min-width: 0; }
+    .nav-search { width: min(100%, 220px) !important; }
+    .chat-layout { grid-template-columns: 1fr; height: auto; min-height: 0; padding: var(--space-3); }
+    .conversation-sidebar { max-height: 220px; border-right: 1px solid var(--color-divider); border-bottom: 0; }
+    .chat-thread { min-height: 62dvh; }
+  }
+  @media (max-width: 480px) {
+    .nav-actions { order: 4; width: 100% !important; }
+    .nav-search { flex: 1; width: auto !important; }
+    .message { max-width: 88%; }
+  }
 </style>
 </head>
 <body>
@@ -64,14 +113,14 @@ const ImageSlot = ({ label, height }) => (
 const SKILL_CATEGORIES = ["React", "Python", "Writing", "UI Design", "Tutoring", "Data Entry", "Video Editing", "Social Media"];
 
 const FREELANCERS = {
-  priya:  { name: "Priya N.",  initials: "PN", rating: 4.9, reviews: 82 },
-  jonah:  { name: "Jonah T.",  initials: "JT", rating: 4.8, reviews: 61 },
-  maren:  { name: "Maren K.",  initials: "MK", rating: 4.9, reviews: 140 },
-  oscar:  { name: "Oscar D.",  initials: "OD", rating: 4.7, reviews: 44 },
-  aiko:   { name: "Aiko S.",   initials: "AS", rating: 5.0, reviews: 97 },
-  devon:  { name: "Devon R.",  initials: "DR", rating: 4.6, reviews: 28 },
-  lucia:  { name: "Lucía F.",  initials: "LF", rating: 4.8, reviews: 53 },
-  sam:    { name: "Sam W.",    initials: "SW", rating: 4.7, reviews: 36 },
+  priya:  { id: "priya", name: "Priya N.",  initials: "PN", rating: 4.9, reviews: 82 },
+  jonah:  { id: "jonah", name: "Jonah T.",  initials: "JT", rating: 4.8, reviews: 61 },
+  maren:  { id: "maren", name: "Maren K.",  initials: "MK", rating: 4.9, reviews: 140 },
+  oscar:  { id: "oscar", name: "Oscar D.",  initials: "OD", rating: 4.7, reviews: 44 },
+  aiko:   { id: "aiko", name: "Aiko S.",   initials: "AS", rating: 5.0, reviews: 97 },
+  devon:  { id: "devon", name: "Devon R.",  initials: "DR", rating: 4.6, reviews: 28 },
+  lucia:  { id: "lucia", name: "Lucía F.",  initials: "LF", rating: 4.8, reviews: 53 },
+  sam:    { id: "sam", name: "Sam W.",    initials: "SW", rating: 4.7, reviews: 36 },
 };
 
 const T = (name, price, delivery) => ({ name, price, delivery });
@@ -188,36 +237,131 @@ const matchBriefs = (avail, skillNames) => {
     .sort((a, c) => c.ratio - a.ratio || a.id - c.id);
 };
 
-class App extends React.Component {
-  state = {
-    viewMode: "client",
-    freelancerTab: "overview",
-    profile: {
-      name: "Priya N.",
-      university: "University of Manchester",
-      course: "BSc Computer Science",
-      skills: [{ skill: "React", level: "intermediate" }, { skill: "UI Design", level: "beginner" }],
-      avail: SEED_AVAIL,
-    },
-    search: "",
-    activeCategory: "All",
-    sortBy: "recommended",
-    gigs: SEED_GIGS,
-    nextGigId: 17,
-    cart: [],
-    cartOpen: false,
-    selectedGigId: null,
-    selectedTierIdx: 0,
-    checkoutOpen: false,
-    orderPlaced: false,
-    checkoutName: "",
-    checkoutEmail: "",
-    newGigOpen: false,
-    newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] },
-  };
+const STORAGE_KEY = "campusgigs:mvp:v1";
+const CURRENT_CLIENT_ID = "current-client";
+const CURRENT_FREELANCER_ID = "priya";
+const SEED_CONVERSATIONS = [
+  {
+    id: "chat-priya-alex",
+    createdAt: "2026-07-24T09:10:00.000Z",
+    updatedAt: "2026-07-25T03:18:00.000Z",
+    client: { id: CURRENT_CLIENT_ID, name: "Alex M.", email: "alex@example.test", phone: "+44 7700 900123" },
+    freelancer: FREELANCERS.priya,
+    order: { title: "React landing page", detail: "Standard tier" },
+    messages: [
+      { id: "chat-priya-alex-1", sender: "client", body: "Hi Priya, could we keep the landing page to five sections?", sentAt: "2026-07-24T09:10:00.000Z" },
+      { id: "chat-priya-alex-2", sender: "freelancer", body: "Absolutely. Send the final copy here and I’ll map it into the first draft.", sentAt: "2026-07-25T03:18:00.000Z" },
+    ],
+  },
+  {
+    id: "chat-aiko-alex",
+    createdAt: "2026-07-23T15:30:00.000Z",
+    updatedAt: "2026-07-24T11:45:00.000Z",
+    client: { id: CURRENT_CLIENT_ID, name: "Alex M.", email: "alex@example.test", phone: "+44 7700 900123" },
+    freelancer: FREELANCERS.aiko,
+    order: { title: "GCSE maths tutoring", detail: "Two sessions" },
+    messages: [
+      { id: "chat-aiko-alex-1", sender: "client", body: "Thursday after 5pm works well for the first session.", sentAt: "2026-07-23T15:30:00.000Z" },
+      { id: "chat-aiko-alex-2", sender: "freelancer", body: "Booked for 5:30pm. I’ll send a short topic checklist beforehand.", sentAt: "2026-07-24T11:45:00.000Z" },
+    ],
+  },
+  {
+    id: "chat-priya-maya",
+    createdAt: "2026-07-25T01:05:00.000Z",
+    updatedAt: "2026-07-25T06:22:00.000Z",
+    client: { id: "client-maya", name: "Maya Chen", email: "maya@example.test", phone: "+44 7700 900456" },
+    freelancer: FREELANCERS.priya,
+    order: { title: "Responsive React fixes", detail: "Basic tier" },
+    messages: [
+      { id: "chat-priya-maya-1", sender: "client", body: "The navigation wraps at 768px. I’ve added screenshots to the brief.", sentAt: "2026-07-25T01:05:00.000Z" },
+      { id: "chat-priya-maya-2", sender: "freelancer", body: "Got them. I can patch the breakpoint and send a preview this afternoon.", sentAt: "2026-07-25T06:22:00.000Z" },
+    ],
+  },
+];
 
-  setViewClient = () => this.setState({ viewMode: "client" });
-  setViewFreelancer = () => this.setState({ viewMode: "freelancer" });
+const blankNewGig = () => ({
+  title: "", category: SKILL_CATEGORIES[0], desc: "",
+  tierPrices: ["", "", ""], tierDeliveries: ["", "", ""],
+});
+
+const makeInitialState = () => ({
+  viewMode: "client",
+  chatRole: "client",
+  freelancerTab: "overview",
+  profile: {
+    name: "Priya N.",
+    university: "University of Manchester",
+    course: "BSc Computer Science",
+    skills: [{ skill: "React", level: "intermediate" }, { skill: "UI Design", level: "beginner" }],
+    avail: SEED_AVAIL,
+  },
+  search: "",
+  activeCategory: "All",
+  sortBy: "recommended",
+  gigs: SEED_GIGS,
+  nextGigId: 17,
+  cart: [],
+  cartOpen: false,
+  selectedGigId: null,
+  selectedTierIdx: 0,
+  checkoutOpen: false,
+  orderPlaced: false,
+  checkoutName: "",
+  checkoutEmail: "",
+  checkoutPhone: "",
+  checkoutError: "",
+  pendingConversationIds: [],
+  conversations: SEED_CONVERSATIONS,
+  activeConversationId: "chat-priya-alex",
+  chatDraft: "",
+  newGigOpen: false,
+  newGig: blankNewGig(),
+});
+
+const loadLocalState = () => {
+  const base = makeInitialState();
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "null");
+    if (!saved || saved.version !== 1) return base;
+    return {
+      ...base,
+      profile: saved.profile && typeof saved.profile === "object" ? saved.profile : base.profile,
+      gigs: Array.isArray(saved.gigs) ? saved.gigs : base.gigs,
+      nextGigId: Number.isInteger(saved.nextGigId) ? saved.nextGigId : base.nextGigId,
+      cart: Array.isArray(saved.cart) ? saved.cart : base.cart,
+      conversations: Array.isArray(saved.conversations) ? saved.conversations : base.conversations,
+    };
+  } catch (error) {
+    console.warn("CampusGigs could not restore local data.", error);
+    return base;
+  }
+};
+
+const saveLocalState = (state) => {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: 1,
+      profile: state.profile,
+      gigs: state.gigs,
+      nextGigId: state.nextGigId,
+      cart: state.cart,
+      conversations: state.conversations,
+    }));
+  } catch (error) {
+    console.warn("CampusGigs could not save local data.", error);
+  }
+};
+
+const makeId = (prefix) => prefix + "-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+const initialsFor = (name) => (name || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join("");
+const freelancerIdFor = (freelancer) => freelancer.id || freelancer.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
+class App extends React.Component {
+  state = loadLocalState();
+
+  setViewClient = () => this.setState({ viewMode: "client", chatRole: "client" });
+  setViewFreelancer = () => this.setState({ viewMode: "freelancer", chatRole: "freelancer" });
+  setViewChat = () => this.setState({ viewMode: "chat" });
   onSearchChange = (e) => this.setState({ search: e.target.value });
   onSortChange = (e) => this.setState({ sortBy: e.target.value });
   setCategory = (cat) => this.setState({ activeCategory: cat });
@@ -249,15 +393,162 @@ class App extends React.Component {
     this.setState({ selectedGigId: null });
   };
 
-  openCheckout = () => this.setState({ checkoutOpen: true, cartOpen: false, orderPlaced: false });
+  openCheckout = () => {
+    if (!this.state.cart.length) return;
+    this.setState({ checkoutOpen: true, cartOpen: false, orderPlaced: false, checkoutError: "", pendingConversationIds: [] });
+  };
   closeCheckout = () => this.setState({ checkoutOpen: false, cartOpen: true });
-  onCheckoutNameChange = (e) => this.setState({ checkoutName: e.target.value });
-  onCheckoutEmailChange = (e) => this.setState({ checkoutEmail: e.target.value });
-  placeOrder = () => this.setState({ orderPlaced: true });
-  finishCheckout = () => this.setState({ checkoutOpen: false, orderPlaced: false, cart: [], checkoutName: "", checkoutEmail: "" });
+  onCheckoutNameChange = (e) => this.setState({ checkoutName: e.target.value, checkoutError: "" });
+  onCheckoutEmailChange = (e) => this.setState({ checkoutEmail: e.target.value, checkoutError: "" });
+  onCheckoutPhoneChange = (e) => this.setState({ checkoutPhone: e.target.value, checkoutError: "" });
+
+  placeOrder = (e) => {
+    if (e) e.preventDefault();
+    this.setState((s) => {
+      if (s.orderPlaced) return null;
+      const name = s.checkoutName.trim();
+      const email = s.checkoutEmail.trim();
+      const phone = s.checkoutPhone.trim();
+      const phoneDigits = phone.replace(/\D/g, "");
+      if (!s.cart.length) return { checkoutError: "Your cart is empty." };
+      if (!name) return { checkoutError: "Enter your name." };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { checkoutError: "Enter a valid email address." };
+      if (!/^[+\d\s().-]+$/.test(phone) || phoneDigits.length < 7 || phoneDigits.length > 15) {
+        return { checkoutError: "Enter a valid contact number with 7–15 digits." };
+      }
+
+      const grouped = new Map();
+      s.cart.forEach((line) => {
+        const gig = s.gigs.find((item) => item.id === line.gigId);
+        const tier = gig && gig.tiers[line.tierIdx];
+        if (!gig || !tier) return;
+        const freelancerId = freelancerIdFor(gig.freelancer);
+        const group = grouped.get(freelancerId) || { freelancer: { ...gig.freelancer, id: freelancerId }, items: [] };
+        group.items.push({ title: gig.title, tierName: tier.name, qty: line.qty, total: tier.price * line.qty });
+        grouped.set(freelancerId, group);
+      });
+      if (!grouped.size) return { checkoutError: "The items in your cart are no longer available." };
+
+      const now = new Date().toISOString();
+      const pendingConversationIds = [];
+      let conversations = [...s.conversations];
+      grouped.forEach((group, freelancerId) => {
+        const detail = group.items.map((item) => item.title + " (" + item.tierName + " ×" + item.qty + ")").join(", ");
+        const existingIndex = conversations.findIndex((conversation) =>
+          conversation.client.id === CURRENT_CLIENT_ID && freelancerIdFor(conversation.freelancer) === freelancerId
+        );
+        const message = {
+          id: makeId("message"),
+          sender: "client",
+          body: "I’ve placed an order for " + detail + ". Let me know what you need to get started.",
+          sentAt: now,
+        };
+        if (existingIndex >= 0) {
+          const current = conversations[existingIndex];
+          conversations[existingIndex] = {
+            ...current,
+            updatedAt: now,
+            client: { id: CURRENT_CLIENT_ID, name, email, phone },
+            order: { title: group.items[0].title, detail: group.items.length > 1 ? group.items.length + " items" : group.items[0].tierName + " tier" },
+            messages: [...current.messages, message],
+          };
+          pendingConversationIds.push(current.id);
+        } else {
+          const id = makeId("chat");
+          conversations.push({
+            id,
+            createdAt: now,
+            updatedAt: now,
+            client: { id: CURRENT_CLIENT_ID, name, email, phone },
+            freelancer: group.freelancer,
+            order: { title: group.items[0].title, detail: group.items.length > 1 ? group.items.length + " items" : group.items[0].tierName + " tier" },
+            messages: [message],
+          });
+          pendingConversationIds.push(id);
+        }
+      });
+      return { conversations, pendingConversationIds, orderPlaced: true, checkoutError: "" };
+    });
+  };
+
+  finishCheckout = () => this.setState((s) => ({
+    checkoutOpen: false,
+    orderPlaced: false,
+    cart: [],
+    checkoutName: "",
+    checkoutEmail: "",
+    checkoutPhone: "",
+    checkoutError: "",
+    viewMode: "chat",
+    chatRole: "client",
+    activeConversationId: s.pendingConversationIds[0] || s.activeConversationId,
+    pendingConversationIds: [],
+  }));
+
+  conversationsForRole = (state, role) => state.conversations.filter((conversation) =>
+    role === "client"
+      ? conversation.client.id === CURRENT_CLIENT_ID
+      : freelancerIdFor(conversation.freelancer) === CURRENT_FREELANCER_ID
+  );
+
+  setChatRole = (role) => this.setState((s) => {
+    const conversations = this.conversationsForRole(s, role);
+    const selectedIsVisible = conversations.some((conversation) => conversation.id === s.activeConversationId);
+    return {
+      chatRole: role,
+      activeConversationId: selectedIsVisible ? s.activeConversationId : (conversations[0] ? conversations[0].id : null),
+    };
+  });
+  selectConversation = (id) => this.setState({ activeConversationId: id, chatDraft: "" });
+  onChatDraftChange = (e) => this.setState({ chatDraft: e.target.value });
+  sendMessage = (e) => {
+    e.preventDefault();
+    const body = this.state.chatDraft.trim();
+    if (!body || !this.state.activeConversationId) return;
+    const sentAt = new Date().toISOString();
+    this.setState((s) => ({
+      chatDraft: "",
+      conversations: s.conversations.map((conversation) => conversation.id === s.activeConversationId ? {
+        ...conversation,
+        updatedAt: sentAt,
+        messages: [...conversation.messages, { id: makeId("message"), sender: s.chatRole, body, sentAt }],
+      } : conversation),
+    }));
+  };
+
+  messageSelectedFreelancer = () => {
+    const gig = this.state.gigs.find((item) => item.id === this.state.selectedGigId);
+    if (!gig) return;
+    const freelancerId = freelancerIdFor(gig.freelancer);
+    this.setState((s) => {
+      const existing = s.conversations.find((conversation) =>
+        conversation.client.id === CURRENT_CLIENT_ID && freelancerIdFor(conversation.freelancer) === freelancerId
+      );
+      if (existing) {
+        return { viewMode: "chat", chatRole: "client", activeConversationId: existing.id, selectedGigId: null };
+      }
+      const id = makeId("chat");
+      const now = new Date().toISOString();
+      return {
+        viewMode: "chat",
+        chatRole: "client",
+        activeConversationId: id,
+        selectedGigId: null,
+        conversations: [...s.conversations, {
+          id,
+          createdAt: now,
+          updatedAt: now,
+          client: { id: CURRENT_CLIENT_ID, name: "You", email: "", phone: "" },
+          freelancer: { ...gig.freelancer, id: freelancerId },
+          order: { title: gig.title, detail: "Pre-order enquiry" },
+          messages: [],
+        }],
+      };
+    });
+  };
 
   openNewGig = () => this.setState({ newGigOpen: true });
-  closeNewGig = () => this.setState({ newGigOpen: false, newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] } });
+  closeNewGig = () => this.setState({ newGigOpen: false, newGig: blankNewGig() });
   onNewGigTitleChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, title: e.target.value } }));
   onNewGigCategoryChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, category: e.target.value } }));
   onNewGigDescChange = (e) => this.setState((s) => ({ newGig: { ...s.newGig, desc: e.target.value } }));
@@ -286,7 +577,7 @@ class App extends React.Component {
     };
     this.setState({
       gigs: [...gigs, gig], nextGigId: nextGigId + 1, newGigOpen: false,
-      newGig: { title: "", category: SKILL_CATEGORIES[0], desc: "", tierPrices: ["", "", ""], tierDeliveries: ["", "", ""] },
+      newGig: blankNewGig(),
     });
   };
 
@@ -304,9 +595,21 @@ class App extends React.Component {
     window.addEventListener("pointermove", this.onDragMove);
     window.addEventListener("pointerup", this.onDragEnd);
   }
+  componentDidUpdate(prevProps, prevState) {
+    const durableChanged =
+      prevState.profile !== this.state.profile ||
+      prevState.gigs !== this.state.gigs ||
+      prevState.nextGigId !== this.state.nextGigId ||
+      prevState.cart !== this.state.cart ||
+      prevState.conversations !== this.state.conversations;
+    if (!durableChanged) return;
+    window.clearTimeout(this.persistTimer);
+    this.persistTimer = window.setTimeout(() => saveLocalState(this.state), 120);
+  }
   componentWillUnmount() {
     window.removeEventListener("pointermove", this.onDragMove);
     window.removeEventListener("pointerup", this.onDragEnd);
+    window.clearTimeout(this.persistTimer);
   }
 
   hourFromX = (rect, clientX) => {
@@ -520,27 +823,80 @@ class App extends React.Component {
       }
     }
 
+    const formatChatTime = (value) => {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? "" : date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    };
+    const visibleConversations = this.conversationsForRole(s, s.chatRole)
+      .slice()
+      .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    const resolvedConversation = visibleConversations.find((conversation) => conversation.id === s.activeConversationId) || visibleConversations[0] || null;
+    const chatConversations = visibleConversations.map((conversation) => {
+      const counterpart = s.chatRole === "client" ? conversation.freelancer : conversation.client;
+      const lastMessage = conversation.messages[conversation.messages.length - 1];
+      return {
+        id: conversation.id,
+        name: counterpart.name,
+        initials: counterpart.initials || initialsFor(counterpart.name),
+        orderTitle: conversation.order.title,
+        preview: lastMessage ? lastMessage.body : "No messages yet",
+        time: formatChatTime(conversation.updatedAt),
+        selected: resolvedConversation && resolvedConversation.id === conversation.id,
+        select: () => this.selectConversation(conversation.id),
+      };
+    });
+    let activeChat = null;
+    if (resolvedConversation) {
+      const counterpart = s.chatRole === "client" ? resolvedConversation.freelancer : resolvedConversation.client;
+      activeChat = {
+        id: resolvedConversation.id,
+        counterpartName: counterpart.name,
+        counterpartInitials: counterpart.initials || initialsFor(counterpart.name),
+        orderTitle: resolvedConversation.order.title,
+        orderDetail: resolvedConversation.order.detail,
+        contactPhone: resolvedConversation.client.phone,
+        messages: resolvedConversation.messages.map((message) => ({
+          ...message,
+          mine: message.sender === s.chatRole,
+          author: message.sender === "client" ? resolvedConversation.client.name : resolvedConversation.freelancer.name,
+          time: formatChatTime(message.sentAt),
+        })),
+      };
+    }
+
     return {
       isClient: s.viewMode === "client",
       isFreelancer: s.viewMode === "freelancer",
+      isChat: s.viewMode === "chat",
       isOverviewTab: s.viewMode === "freelancer" && s.freelancerTab === "overview",
       isListingsTab: s.viewMode === "freelancer" && s.freelancerTab === "listings",
       showOverviewTab: () => this.setFreelancerTab("overview"),
       showListingsTab: () => this.setFreelancerTab("listings"),
       profile: p, skillChips, demandRows, availByDay, hourTicks, totalHours, windowCount,
       matchedBriefs, matchedCount: matchedBriefs.length, noMatches: matchedBriefs.length === 0, insight,
-      setViewClient: this.setViewClient, setViewFreelancer: this.setViewFreelancer,
+      setViewClient: this.setViewClient, setViewFreelancer: this.setViewFreelancer, setViewChat: this.setViewChat,
       search: s.search, onSearchChange: this.onSearchChange,
       sortBy: s.sortBy, onSortChange: this.onSortChange,
       categoryChips, filteredGigs, resultsLabel, noResults: filteredGigs.length === 0,
       cartOpen: s.cartOpen, toggleCart: this.toggleCart, cartCount,
       cartEmpty: cartLines.length === 0, cartLines, cartSubtotal,
-      selectedGig, closeGig: this.closeGig, addSelectedTier: this.addSelectedTier,
+      selectedGig, closeGig: this.closeGig, addSelectedTier: this.addSelectedTier, messageSelectedFreelancer: this.messageSelectedFreelancer,
       checkoutOpen: s.checkoutOpen, checkoutPending: !s.orderPlaced, orderPlaced: s.orderPlaced,
       openCheckout: this.openCheckout, closeCheckout: this.closeCheckout,
       placeOrder: this.placeOrder, finishCheckout: this.finishCheckout,
-      checkoutName: s.checkoutName, checkoutEmail: s.checkoutEmail,
-      onCheckoutNameChange: this.onCheckoutNameChange, onCheckoutEmailChange: this.onCheckoutEmailChange,
+      checkoutName: s.checkoutName, checkoutEmail: s.checkoutEmail, checkoutPhone: s.checkoutPhone, checkoutError: s.checkoutError,
+      onCheckoutNameChange: this.onCheckoutNameChange, onCheckoutEmailChange: this.onCheckoutEmailChange, onCheckoutPhoneChange: this.onCheckoutPhoneChange,
+      chatRole: s.chatRole,
+      isChatClient: s.chatRole === "client",
+      isChatFreelancer: s.chatRole === "freelancer",
+      showClientChats: () => this.setChatRole("client"),
+      showFreelancerChats: () => this.setChatRole("freelancer"),
+      chatConversations,
+      chatEmpty: chatConversations.length === 0,
+      activeChat,
+      chatDraft: s.chatDraft,
+      onChatDraftChange: this.onChatDraftChange,
+      sendMessage: this.sendMessage,
       myGigs, stats,
       openNewGig: this.openNewGig, closeNewGig: this.closeNewGig, newGigOpen: s.newGigOpen, newGig: s.newGig,
       skillCategories: SKILL_CATEGORIES,
@@ -556,20 +912,17 @@ class App extends React.Component {
     return (
       <div style={S("min-height:100vh;background:var(--color-bg);font-family:var(--font-body);color:var(--color-text)")}>
 
-        <nav className="nav" style={S("position:sticky;top:0;z-index:20;background:var(--color-bg)")}>
+        <nav className="nav" aria-label="Primary" style={S("position:sticky;top:0;z-index:20;background:var(--color-bg);border-bottom:1px solid var(--color-divider)")}>
           <span className="nav-brand">Campus<span style={S("color:var(--color-accent-700)")}>Gigs</span></span>
-          <div className="seg" role="radiogroup" aria-label="View mode" style={S("flex:0 0 auto")}>
-            <label className="seg-opt" style={S("min-width:88px;justify-content:center")}>
-              <input type="radio" name="viewmode" checked={v.isClient} onChange={v.setViewClient} />Browse
-            </label>
-            <label className="seg-opt" style={S("min-width:88px;justify-content:center")}>
-              <input type="radio" name="viewmode" checked={v.isFreelancer} onChange={v.setViewFreelancer} />My gigs
-            </label>
+          <div className="primary-nav">
+            <button type="button" className="primary-nav__item" aria-current={v.isClient ? "page" : undefined} onClick={v.setViewClient}>Browse</button>
+            <button type="button" className="primary-nav__item" aria-current={v.isFreelancer ? "page" : undefined} onClick={v.setViewFreelancer}>My gigs</button>
+            <button type="button" className="primary-nav__item" aria-current={v.isChat ? "page" : undefined} onClick={v.setViewChat}>Chat</button>
           </div>
-          <div style={S("margin-left:auto;display:flex;align-items:center;gap:8px;justify-content:flex-end;flex:0 0 auto;width:330px")}>
+          <div className="nav-actions">
             {v.isClient && (
               <React.Fragment>
-                <input className="input" style={S("width:220px")} placeholder="Search gigs, skills, people" value={v.search} onChange={v.onSearchChange} aria-label="Search gigs" />
+                <input className="input nav-search" style={S("width:220px")} placeholder="Search gigs, skills, people" value={v.search} onChange={v.onSearchChange} aria-label="Search gigs" />
                 <button type="button" className="btn btn-ghost" style={S("position:relative")} onClick={v.toggleCart}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 2-1.63l1.65-8.37H5.12"/></svg>
                   Cart
@@ -582,6 +935,16 @@ class App extends React.Component {
                 <span style={S("color:var(--color-neutral-700)")}>Seller mode</span>
                 <div style={S("width:28px;height:28px;border-radius:50%;background:var(--color-accent-700);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center")}>PN</div>
                 <span style={S("font-weight:600")}>Priya N.</span>
+              </div>
+            )}
+            {v.isChat && (
+              <div className="seg" role="radiogroup" aria-label="Chat as">
+                <label className="seg-opt">
+                  <input type="radio" name="chat-role" checked={v.isChatClient} onChange={v.showClientChats} />Client
+                </label>
+                <label className="seg-opt">
+                  <input type="radio" name="chat-role" checked={v.isChatFreelancer} onChange={v.showFreelancerChats} />Freelancer
+                </label>
               </div>
             )}
           </div>
@@ -778,6 +1141,75 @@ class App extends React.Component {
           </div>
         )}
 
+        {v.isChat && (
+          <main className="chat-layout" data-view="chat">
+            <aside className="conversation-sidebar" aria-labelledby="conversations-title">
+              <div className="conversation-sidebar__header">
+                <h1 id="conversations-title" style={S("font-size:20px;margin:0")}>Conversations</h1>
+                <div style={S("font-size:11px;color:var(--color-neutral-700);margin-top:3px")}>
+                  {v.isChatClient ? "Client inbox" : "Freelancer inbox"}
+                </div>
+              </div>
+              {v.chatEmpty ? (
+                <div className="chat-empty">
+                  <div>
+                    <p>No conversations yet.</p>
+                    <button type="button" className="btn btn-secondary" onClick={v.isChatClient ? v.setViewClient : v.setViewFreelancer}>
+                      {v.isChatClient ? "Browse gigs" : "View client briefs"}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <ul className="conversation-list" data-chat-list>
+                  {v.chatConversations.map((conversation) => (
+                    <li key={conversation.id}>
+                      <button type="button" className="conversation-item" data-conversation-id={conversation.id} aria-current={conversation.selected ? "true" : undefined} onClick={conversation.select}>
+                        <span className="conversation-item__top">
+                          <span className="conversation-item__name">{conversation.name}</span>
+                          <time className="conversation-item__time">{conversation.time}</time>
+                        </span>
+                        <span className="conversation-item__meta">{conversation.orderTitle}</span>
+                        <span className="conversation-item__preview">{conversation.preview}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </aside>
+
+            {v.activeChat ? (
+              <section className="chat-thread" aria-labelledby="thread-title">
+                <header className="chat-thread__header">
+                  <h2 className="chat-thread__title" id="thread-title">{v.activeChat.counterpartName}</h2>
+                  <div className="chat-thread__meta">
+                    {v.activeChat.orderTitle} · {v.activeChat.orderDetail}
+                    {v.activeChat.contactPhone && <React.Fragment> · Contact {v.activeChat.contactPhone}</React.Fragment>}
+                  </div>
+                </header>
+                <div className="message-log" data-message-list role="log" aria-live="polite" aria-relevant="additions">
+                  {!v.activeChat.messages.length && (
+                    <div className="chat-empty">Start the conversation about this gig.</div>
+                  )}
+                  {v.activeChat.messages.map((message) => (
+                    <article key={message.id} className={"message" + (message.mine ? " message--mine" : "")}>
+                      <div className="message__author">{message.mine ? "You" : message.author}</div>
+                      <div className="message__body">{message.body}</div>
+                      <time className="message__time" dateTime={message.sentAt}>{message.time}</time>
+                    </article>
+                  ))}
+                </div>
+                <form className="chat-composer" data-chat-compose onSubmit={v.sendMessage}>
+                  <label className="sr-only" htmlFor="chat-message">Message {v.activeChat.counterpartName}</label>
+                  <textarea id="chat-message" className="input" rows="1" placeholder={"Message " + v.activeChat.counterpartName} value={v.chatDraft} onChange={v.onChatDraftChange}></textarea>
+                  <button type="submit" className="btn btn-primary blueprint" disabled={!v.chatDraft.trim()}><Corners />Send</button>
+                </form>
+              </section>
+            ) : (
+              <section className="chat-thread chat-empty">Choose a conversation to start messaging.</section>
+            )}
+          </main>
+        )}
+
         {v.cartOpen && (
           <React.Fragment>
             <div style={S("position:fixed;inset:0;background:rgba(15,18,20,.5);z-index:40")} onClick={v.toggleCart}></div>
@@ -806,7 +1238,7 @@ class App extends React.Component {
               </div>
               <div style={S("padding:var(--space-4);border-top:1px solid var(--color-divider)")}>
                 <div style={S("display:flex;justify-content:space-between;font-size:14px;margin-bottom:10px")}><span>Subtotal</span><strong>${v.cartSubtotal}</strong></div>
-                <button type="button" className="btn btn-primary btn-block blueprint" onClick={v.openCheckout}><Corners />Checkout</button>
+                <button type="button" className="btn btn-primary btn-block blueprint" onClick={v.openCheckout} disabled={v.cartEmpty}><Corners />Checkout</button>
               </div>
             </div>
           </React.Fragment>
@@ -835,6 +1267,7 @@ class App extends React.Component {
               </div>
               <div className="dialog-actions">
                 <button type="button" className="btn btn-secondary blueprint" onClick={v.closeGig}><Corners />Close</button>
+                <button type="button" className="btn btn-secondary blueprint" onClick={v.messageSelectedFreelancer}><Corners />Message freelancer</button>
                 <button type="button" className="btn btn-primary blueprint" onClick={v.addSelectedTier}><Corners />Add to cart</button>
               </div>
             </div>
@@ -843,20 +1276,20 @@ class App extends React.Component {
 
         {v.checkoutOpen && (
           <div className="dialog-backdrop" style={S("position:fixed;z-index:50")}>
-            <div className="dialog blueprint" style={S("max-width:440px")} role="dialog" aria-modal="true">
+            <div className="dialog blueprint" style={S("max-width:440px")} role="dialog" aria-modal="true" aria-labelledby="checkout-title">
               <Corners />
               {v.orderPlaced && (
                 <React.Fragment>
-                  <div className="dialog-title">Order placed</div>
-                  <div className="dialog-body">Your gigs have been requested. Freelancers will confirm delivery windows directly — this is a prototype, no real charge was made.</div>
+                  <div className="dialog-title" id="checkout-title">Order placed</div>
+                  <div className="dialog-body">Your request and contact number are ready in Chat. This is a prototype, so no real charge was made.</div>
                   <div className="dialog-actions">
-                    <button type="button" className="btn btn-primary blueprint" onClick={v.finishCheckout}><Corners />Done</button>
+                    <button type="button" className="btn btn-primary blueprint" data-proceed-chat onClick={v.finishCheckout}><Corners />Proceed to chat</button>
                   </div>
                 </React.Fragment>
               )}
               {v.checkoutPending && (
-                <React.Fragment>
-                  <div className="dialog-title">Checkout</div>
+                <form onSubmit={v.placeOrder}>
+                  <div className="dialog-title" id="checkout-title">Checkout</div>
                   <div style={S("max-height:180px;overflow-y:auto;margin:10px 0")}>
                     {v.cartLines.map((line) => (
                       <div key={line.key} style={S("display:flex;justify-content:space-between;font-size:13px;padding:5px 0")}>
@@ -865,13 +1298,15 @@ class App extends React.Component {
                     ))}
                   </div>
                   <div style={S("display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding-top:8px;border-top:1px solid var(--color-divider);margin-bottom:var(--space-3)")}><span>Total</span><span>${v.cartSubtotal}</span></div>
-                  <div className="field"><label htmlFor="co-name">Name</label><input id="co-name" className="input" value={v.checkoutName} onChange={v.onCheckoutNameChange} /></div>
-                  <div className="field"><label htmlFor="co-email">Email</label><input id="co-email" className="input" type="email" value={v.checkoutEmail} onChange={v.onCheckoutEmailChange} /></div>
+                  <div className="field"><label htmlFor="co-name">Name</label><input id="co-name" className="input" autoComplete="name" required value={v.checkoutName} onChange={v.onCheckoutNameChange} /></div>
+                  <div className="field"><label htmlFor="co-email">Email</label><input id="co-email" className="input" type="email" autoComplete="email" required value={v.checkoutEmail} onChange={v.onCheckoutEmailChange} /></div>
+                  <div className="field"><label htmlFor="co-phone">Contact number</label><input id="co-phone" className="input" type="tel" inputMode="tel" autoComplete="tel" required aria-invalid={v.checkoutError ? "true" : undefined} aria-describedby={v.checkoutError ? "checkout-error" : undefined} value={v.checkoutPhone} onChange={v.onCheckoutPhoneChange} /></div>
+                  {v.checkoutError && <p className="checkout-error" id="checkout-error" role="alert">{v.checkoutError}</p>}
                   <div className="dialog-actions">
                     <button type="button" className="btn btn-secondary blueprint" onClick={v.closeCheckout}><Corners />Back to cart</button>
-                    <button type="button" className="btn btn-primary blueprint" onClick={v.placeOrder}><Corners />Place order</button>
+                    <button type="submit" className="btn btn-primary blueprint"><Corners />Place order</button>
                   </div>
-                </React.Fragment>
+                </form>
               )}
             </div>
           </div>
