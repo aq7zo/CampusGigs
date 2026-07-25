@@ -26,12 +26,3 @@ No build step, no dependencies to install. Open `index.html` in a browser, or se
 ```
 python -m http.server 8000
 ```
-
-React and Babel are loaded from a CDN, so an internet connection is needed on first load.
-
-## Files
-
-- `index.html` — the whole app (React via CDN, compiled in-browser by Babel)
-- `industry.css` — design tokens and shared styles
-- `PRODUCT.md` — product definition: users, purpose, positioning, design principles
-- `DESIGN.md` — visual system and component specs
