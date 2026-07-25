@@ -33,4 +33,3 @@ React and Babel are loaded from a CDN, so an internet connection is needed on fi
 - `industry.css` — design tokens and shared styles
 - `PRODUCT.md` — product definition: users, purpose, positioning, design principles
 - `DESIGN.md` — visual system and component specs
-- `docs/superpowers/` — the spec and implementation plan the build ran from

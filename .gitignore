@@ -4,8 +4,8 @@ brainstorm.txt
 .playwright-cli/
 .impeccable/
 output/
-.github/
-docs/
+.github/workflows
+docs/superpowers
 
 # editors / OS
 .vscode/
